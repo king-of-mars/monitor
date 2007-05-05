@@ -1,0 +1,11 @@
+To do:
+    -Has to listen to the default device automatically
+    -Implement a message handler (console)
+    -Change the current device using a dropbox
+    -Safe threads (mutex)
+    -Discriminate download/upload
+    -Tray Icon
+
+Bugs:
+    -In UNIX crashes if started without sudo
+    (prob tries to open unexisting device)

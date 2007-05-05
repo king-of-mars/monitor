@@ -1,0 +1,12 @@
+INPUT(
+./release\main.o
+./release\ThreadListener.o
+./release\WinPcapFns.o
+./release\MainWindow.o
+./release\Scope.o
+./release\Console.o
+./release\moc_ThreadListener.o
+./release\moc_MainWindow.o
+./release\moc_Scope.o
+./release\moc_Console.o
+);
