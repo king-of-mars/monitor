@@ -1,0 +1,12 @@
+INPUT(
+./debug\main.o
+./debug\ThreadListener.o
+./debug\WinPcapFns.o
+./debug\MainWindow.o
+./debug\Scope.o
+./debug\Console.o
+./debug\moc_ThreadListener.o
+./debug\moc_MainWindow.o
+./debug\moc_Scope.o
+./debug\moc_Console.o
+);
