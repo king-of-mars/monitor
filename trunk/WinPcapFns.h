@@ -57,6 +57,8 @@ class PcapHandler
         */
         int StartListenOnDevice_countData();
 
+        void instructStop();
+
         /*!
         Checks if the current device is ready to use
         \returns
@@ -106,6 +108,8 @@ class PcapHandler
 
         //!The ip address of the current device
         string IPadd;
+
+        bool stopInstructed;
 };
 
 /*! 4 bytes IP address */

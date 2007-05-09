@@ -15,6 +15,7 @@ class ThreadListener : public QThread
     Q_OBJECT
     public:
         ThreadListener(PcapHandler * PcapH_in);
+        void instructStop();
 
     protected:
         void run();
