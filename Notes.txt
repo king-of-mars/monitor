@@ -1,8 +1,4 @@
 To do:
-    -Has to listen to the default device automatically
-    -Implement a message handler (console)
-    -Change the current device using a dropbox
-    -Discriminate download/upload
     -Tray Icon
     -Win Installer that installs dependencies automatically
     -Web site with user comments
@@ -10,6 +6,12 @@ To do:
     -Load GUI options from config file
     -Harmonize comments with Doxygen
     -Check if it is worth using the UI builder
+    -Scope can display more than one line at the same time
+    -Scope colors
+    -Memory leaks
+    -CPU consuption (scope)
+    -Have the down/up speed averaged over 'N' samples
+    -Scope: Have the different data match strings
 
 Bugs:
     -In UNIX crashes if started without sudo

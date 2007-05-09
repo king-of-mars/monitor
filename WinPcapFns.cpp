@@ -29,7 +29,8 @@ string ip_to_String(int a,int b, int c, int d)
 
 PcapHandler::PcapHandler()
 {
-    TotalDataTransferred_bytes = 0.0;
+    TotalDataDownloaded_bytes = 0.0;
+    TotalDataUploaded_bytes = 0.0;
     Ndevices = 0;
     DeviceReady = 0;
 }
@@ -157,6 +158,66 @@ int PcapHandler::CheckIfCurrDeviceReady()
     }
 }
 
+/* From tcptraceroute, convert a numeric IP address to a string */
+#define IPTOSBUFFERS	12
+char *iptos(u_long in)
+{
+	static char output[IPTOSBUFFERS][3*4+3+1];
+	static short which;
+	u_char *p;
+
+	p = (u_char *)&in;
+	which = (which + 1 == IPTOSBUFFERS ? 0 : which + 1);
+	sprintf(output[which], "%d.%d.%d.%d", p[0], p[1], p[2], p[3]);
+	return output[which];
+}
+
+string PcapHandler::getDeviceIP(int DeviceNo)
+{
+    pcap_if_t *Adev;
+    int it=0;
+    assert(DeviceNo>0);
+
+    for(Adev=alldevs;Adev;Adev=Adev->next)
+    {
+        if (it==DeviceNo-1)
+            break;
+
+        it++;
+    }
+
+    pcap_addr_t *a;
+    char ip6str[128];
+
+    string IPa;
+    /* IP addresses */
+    for(a=Adev->addresses;a;a=a->next) {
+        switch(a->addr->sa_family)
+        {
+          case AF_INET:
+            if (a->addr)
+            {
+              IPa = iptos(((struct sockaddr_in *)a->addr)->sin_addr.s_addr);
+              messages.push_back("Device's IP address successfully grabbed, IP = "+IPa);
+            break;
+            }
+
+          case AF_INET6:
+            messages.push_back("ERROR: IPV6 detected, this program doesn't support this mode yet.");
+            IPa = "ERROR (IPV6)";
+            break;
+
+          default:
+            messages.push_back("ERROR: Can't get the device's IP");
+            IPa = "ERROR (UNKNOWN)";
+            break;
+        }
+    }
+
+    IPadd = IPa;
+    return IPa;
+}
+
 int PcapHandler::StartListenOnDevice_countData()
 {
     if (!CheckIfCurrDeviceReady())
@@ -175,8 +236,6 @@ int PcapHandler::StartListenOnDevice_countData()
             /* Timeout elapsed */
             continue;
 
-        set_TotalDataTransferred_bytes (get_TotalDataTransferred_bytes() + header->len);
-
         /* retireve the position of the ip header */
         ih = (ip_header *) (pkt_data + 14);
 
@@ -193,9 +252,11 @@ int PcapHandler::StartListenOnDevice_countData()
                                             ih->daddr.byte4
                                         );
 
-        cout<<source_IP<<"-->"<<dest_IP<<endl;
-        //cout<<ih->saddr.byte1<<endl;
-        //printf("%d.%d.%d.%d. -> %d.%d.%d.%d.\n",
+        if (dest_IP == IPadd)
+            set_TotalDataDownloaded_bytes (get_TotalDataDownloaded_bytes() + header->len);
+
+        if (source_IP == IPadd)
+            set_TotalDataUploaded_bytes (get_TotalDataUploaded_bytes() + header->len);
     }
 
     if(res == -1)
@@ -208,12 +269,22 @@ int PcapHandler::StartListenOnDevice_countData()
     return 0;
 }
 
-float PcapHandler::get_TotalDataTransferred_bytes()
+float PcapHandler::get_TotalDataDownloaded_bytes()
 {
-    return TotalDataTransferred_bytes;
+    return TotalDataDownloaded_bytes;
 }
 
-void PcapHandler::set_TotalDataTransferred_bytes(float TDTb_in)
+float PcapHandler::get_TotalDataUploaded_bytes()
 {
-    TotalDataTransferred_bytes = TDTb_in;
+    return TotalDataUploaded_bytes;
+}
+
+void PcapHandler::set_TotalDataDownloaded_bytes(float TDTb_in)
+{
+    TotalDataDownloaded_bytes = TDTb_in;
+}
+
+void PcapHandler::set_TotalDataUploaded_bytes(float TDTb_in)
+{
+    TotalDataUploaded_bytes = TDTb_in;
 }

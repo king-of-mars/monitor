@@ -11,30 +11,53 @@ MainWindow::MainWindow()
     //MISSING
 
     //Misc inits:
-    LastAmountData = 0;
+    LastAmountData_download = 0;
+    LastAmountData_upload = 0;
+    DataDownloadedSinceLastCall = 0;
+    DataUploadedSinceLastCall = 0;
 
     setWindowTitle(tr("Qt Network Monitor"));
     resize(520, 340);
 
     //-----------------Sets up the widgets---------------------------
     {//Up/Down Stats
-        LCDDownloadKB = new QLCDNumber(this);
-        LCDDownloadKB->setSegmentStyle(QLCDNumber::Filled);
+        DownloadKBpS = new QLabel("0",this);
+        UploadKBpS = new QLabel("0",this);
+        DownloadKBTotal = new QLabel("0",this);
+        UploadKBTotal = new QLabel("0",this);
 
-        LCDUploadKB = new QLCDNumber(this);
-        LCDUploadKB->setSegmentStyle(QLCDNumber::Filled);
+        DownloadKBpS_label = new QLabel("Down.:",this);
+        UploadKBpS_label = new QLabel("Up.:",this);
+        DownloadKBTotal_label = new QLabel("Down. total:",this);
+        UploadKBTotal_label = new QLabel("Up. total:",this);
+
+        DownloadKBpS_units = new QLabel("B/s",this);
+        UploadKBpS_units = new QLabel("B/s",this);
+        DownloadKBTotal_units = new QLabel("B/s",this);
+        UploadKBTotal_units = new QLabel("B/s",this);
 
         DownloadUploadGB = new QGroupBox(tr("Download/Upload Stats"));
         QHBoxLayout *layoutH1 = new QHBoxLayout;
 
-        layoutH1->addWidget(LCDDownloadKB);
-        layoutH1->addWidget(LCDUploadKB);
+        layoutH1->addWidget(DownloadKBpS_label);
+        layoutH1->addWidget(DownloadKBpS);
+        layoutH1->addWidget(DownloadKBpS_units,Qt::AlignLeft);
+        layoutH1->addWidget(UploadKBpS_label);
+        layoutH1->addWidget(UploadKBpS);
+        layoutH1->addWidget(UploadKBpS_units,Qt::AlignLeft);
+        layoutH1->addWidget(DownloadKBTotal_label);
+        layoutH1->addWidget(DownloadKBTotal);
+        layoutH1->addWidget(DownloadKBTotal_units,Qt::AlignLeft);
+        layoutH1->addWidget(UploadKBTotal_label);
+        layoutH1->addWidget(UploadKBTotal);
+        layoutH1->addWidget(UploadKBTotal_units,Qt::AlignLeft);
 
         DownloadUploadGB->setLayout(layoutH1);
     }
 
     {//Device choice menu
         DropListDeviceChoice = new QComboBox(this);
+        DropListDeviceChoice->setMinimumSize(60,10);
         PushBDropListSetToCurrent = new QPushButton("Set",this);
 
         DropListDeviceGB = new QGroupBox(tr("Device to monitor:"));
@@ -48,14 +71,16 @@ MainWindow::MainWindow()
     Console = new QConsole(this);
 
     //Speed Scope
-    DownloadScope = new Scope(this);
+    dataScope = new Scope(this);
 
     {//Sets-up the layout
         QVBoxLayout *mainLayout = new QVBoxLayout;
 
         mainLayout->addWidget(DropListDeviceGB);
         mainLayout->addWidget(DownloadUploadGB);
-        mainLayout->addWidget(DownloadScope, Qt::AlignCenter);
+
+        mainLayout->addWidget(dataScope, Qt::AlignCenter);
+
         mainLayout->addWidget(Console, Qt::AlignBottom);
 
         setLayout(mainLayout);
@@ -77,7 +102,8 @@ MainWindow::MainWindow()
     OpenDevice();
     StartCapture();
 
-    DownloadSpeedHist = vector<float>(256,0);
+    SpeedHist_Download = vector<float>(256,0);
+    SpeedHist_Upload = vector<float>(256,0);
 
     //Signals/Slots
     connect( PushBDropListSetToCurrent, SIGNAL( clicked() ), this, SLOT(ChangeDevice()));
@@ -86,7 +112,6 @@ MainWindow::MainWindow()
 void MainWindow::OpenDevice(int DeviceNO)
 {
     vector<string> * Devices = new vector<string>;
-
     PCHandler.FindAvailDevices(Devices);
 
     DropListDeviceChoice->clear();
@@ -103,7 +128,9 @@ void MainWindow::OpenDevice(int DeviceNO)
     else
         Device_to_Open = Default_DeviceNo;
 
+    PCHandler.getDeviceIP(Device_to_Open);
     PCHandler.openDevice(Device_to_Open);
+
     DropListDeviceChoice->setCurrentIndex(Device_to_Open-1);
 }
 
@@ -123,10 +150,55 @@ void MainWindow::ChangeDevice()
     StartCapture();
 }
 
+string MainWindow::getUnits(float nBits)
+{
+    if ( nBits < 1024.0 )
+        return "B";
+    if ( nBits < 1024.0 * 1024.0 )
+        return "Kb";
+    else
+        return "Mb";
+}
+
+float MainWindow::getDivisor(float nBits)
+{
+    if ( nBits < 1024.0 )
+        return 1.0f;
+    if ( nBits < 1024.0 * 1024.0 )
+        return 1024.0f;
+    else
+        return 1024.0f*1024.0f;
+}
+
 void MainWindow::paintEvent(QPaintEvent *event)
 {
-    LCDDownloadKB->display( (int) (PCHandler.get_TotalDataTransferred_bytes() / 1024.0) );
-    LCDUploadKB->display( (int) (PCHandler.get_TotalDataTransferred_bytes() / (1024.0*1024.0) ) );
+    //Total data downloaded:
+    QString DownloadKBTot_S;
+    QString UploadKBTot_S;
+
+    float divisor = getDivisor( PCHandler.get_TotalDataDownloaded_bytes() );
+    DownloadKBTotal->setText( DownloadKBTot_S.setNum( (int) (PCHandler.get_TotalDataDownloaded_bytes() / divisor) ) );
+    QString DownloadKBTotal_units_S = QString( getUnits(PCHandler.get_TotalDataDownloaded_bytes()).c_str());
+    DownloadKBTotal_units->setText(DownloadKBTotal_units_S);
+
+    divisor = getDivisor( PCHandler.get_TotalDataUploaded_bytes() );
+    UploadKBTotal->setText( UploadKBTot_S.setNum( (int) (PCHandler.get_TotalDataUploaded_bytes() / (divisor) ) ) );
+    QString UploadKBTotal_units_S = QString( getUnits(PCHandler.get_TotalDataUploaded_bytes()).c_str());
+    UploadKBTotal_units->setText(UploadKBTotal_units_S);
+
+    //kb/s:
+    QString DownloadKBpS_S;
+    QString UploadKBpS_S;
+
+    divisor = getDivisor( DataDownloadedSinceLastCall );
+    DownloadKBpS->setText( DownloadKBpS_S.setNum( (int) (DataDownloadedSinceLastCall/divisor) ));
+    QString DownloadKBpS_units_S = QString( getUnits(DataDownloadedSinceLastCall).c_str() + QString("/s")  );
+    DownloadKBpS_units->setText(DownloadKBpS_units_S);
+
+    divisor = getDivisor( DataUploadedSinceLastCall );
+    UploadKBpS->setText( UploadKBpS_S.setNum((int) (DataUploadedSinceLastCall/divisor) ));
+    QString UploadKBpS_units_S = QString( getUnits(DataUploadedSinceLastCall).c_str() + QString("/s") );
+    UploadKBpS_units->setText(UploadKBpS_units_S);
 
     //Update the messages
     Console->Display_Messages( PCHandler.get_messages() );
@@ -134,15 +206,22 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
 void MainWindow::updateKBPS()
 {
-    float DataTransferedSinceLastCall =
-    (PCHandler.get_TotalDataTransferred_bytes()/ 1024.0)-LastAmountData;
+    DataDownloadedSinceLastCall =
+    (PCHandler.get_TotalDataDownloaded_bytes())-LastAmountData_download;
+    LastAmountData_download = (PCHandler.get_TotalDataDownloaded_bytes());
 
-    LastAmountData = (PCHandler.get_TotalDataTransferred_bytes()/ 1024.0);
+    DataUploadedSinceLastCall =
+    (PCHandler.get_TotalDataUploaded_bytes())-LastAmountData_upload;
+    LastAmountData_upload = (PCHandler.get_TotalDataUploaded_bytes());
 
     //Push one in, remove one
-    DownloadSpeedHist.push_back( DataTransferedSinceLastCall );
-    DownloadSpeedHist.erase( DownloadSpeedHist.begin(), DownloadSpeedHist.begin()+1);
+    SpeedHist_Download.push_back( DataDownloadedSinceLastCall );
+    SpeedHist_Download.erase( SpeedHist_Download.begin(), SpeedHist_Download.begin()+1);
 
-    DownloadScope->Set_Data(DownloadSpeedHist);
+    SpeedHist_Upload.push_back( DataUploadedSinceLastCall );
+    SpeedHist_Upload.erase( SpeedHist_Upload.begin(), SpeedHist_Upload.begin()+1);
+
+    dataScope->Set_Data(SpeedHist_Download, 0);
+    dataScope->Set_Data(SpeedHist_Upload, 1);
 }
 
