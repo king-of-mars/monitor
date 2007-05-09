@@ -27,7 +27,7 @@ class PcapHandler
         //!Prints the messages queued
         void Print_messages();
 
-        //!Returns the messages
+        //!Returns the messages and erase them afterwards
         //!\returns vector<string>
         vector<string> get_messages();
 
@@ -38,7 +38,7 @@ class PcapHandler
                 Under Unix: If no device is found, maybe the program wasn't
                 run with sufficient rights, try running as root (sudo ./app).
         */
-        int FindAvailDevices();
+        int FindAvailDevices(vector<string> * outDevices = NULL);
 
         /*! Opens the device. */
         int openDevice(int inum);
@@ -47,13 +47,15 @@ class PcapHandler
         Starts capture on the currently open device,
         justs outputs to std the length of the packets
         */
-        int StartListenOnDevice_outputLength();
+        int StartListenOnDevice_countData();
 
         /*!
-        Starts capture on the currently open device,
-        justs outputs to std the length of the packets
+        Checks if the current device is ready to use
+        \returns
+        0: No
+        1: Yes
         */
-        int StartListenOnDevice_countData();
+        int CheckIfCurrDeviceReady();
 
         //!Thread-safe function to get TotalDataTransferred_bytes
         //!(Implemented with QMutex)
@@ -70,6 +72,15 @@ class PcapHandler
 
         //!The available devices list
         pcap_if_t *alldevs;
+        //!The number of available devices
+        int Ndevices;
+        /*!
+        If the device is ready to be used.
+        0  = Not initialised
+        1  = Ready
+        -1 = Error
+        */
+        int DeviceReady;
 
         //!The opened device
         pcap_t *adhandle;
