@@ -16,7 +16,7 @@ class Scope : public QWidget
 
     public:
          Scope(QWidget *parent = 0);
-         void Set_Data(vector<float> data_in);
+         void Set_Data(vector<float> data_in, int target);
 
     protected:
          void paintEvent(QPaintEvent *event);
@@ -30,13 +30,13 @@ class Scope : public QWidget
         \return v[2]: min_y
         \return v[3]: max_y
         */
-        vector<float> Find_Scale();
+        vector<float> Find_Scale(vector<float>);
 
         //! Data in which the Scaling factors are stored
-        vector<float> Scale;
+        vector<vector<float> > Scale;
 
         //! Data to be displayed in the widget
-        vector<float> data;
+        vector<vector<float> > data;
 
         //! If debug is enabled
         int debug;

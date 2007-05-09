@@ -14,13 +14,24 @@ Scope::Scope(QWidget *parent)
 
     setWindowTitle(tr("Scope"));
     resize(600, 200);
+    setMinimumSize(60,30);
 }
 
-void Scope::Set_Data(vector<float> data_in)
+void Scope::Set_Data(vector<float> data_in, int target)
 {
-    data.assign(data_in.begin(), data_in.end());
-    Scale = Find_Scale();
-    //repaint();
+    assert( target >= 0 );
+    assert( target < data.size() +1 );
+
+    //The data about to be pushed needs to be intialized in the vector
+    if( target == data.size())
+    {
+        data.push_back( data_in );
+        vector<float> newData;
+        Scale.push_back( newData );
+    }
+
+    data[target].assign(data_in.begin(), data_in.end());
+    Scale[target] = Find_Scale(data_in);
 }
 
 float abs(float Fin)
@@ -31,32 +42,32 @@ float abs(float Fin)
         return Fin;
 }
 
-vector<float> Scope::Find_Scale()
+vector<float> Scope::Find_Scale(vector<float> in_Data)
 {
     vector<float> Scale(4);
 
-    if ( data.size() == 0)
+    if ( in_Data.size() == 0)
     {
-        //cout<<"WARNING: No data to scale in Scope::Find_Scale()."<<endl;
-        data.push_back(0);
+        //cout<<"WARNING: No in_Data to scale in Scope::Find_Scale()."<<endl;
+        in_Data.push_back(0);
     }
 
-    //assert(data.size()>0);
+    //assert(in_Data.size()>0);
 
-    float max_y = data[0];
-    float min_y = data[0];
+    float max_y = in_Data[0];
+    float min_y = in_Data[0];
 
-    for (unsigned int x=0; x < data.size(); x++)
+    for (unsigned int x=0; x < in_Data.size(); x++)
     {
-        if ( (data[x]) > (max_y))
-            max_y = (data[x]);
+        if ( (in_Data[x]) > (max_y))
+            max_y = (in_Data[x]);
 
-        if ( (data[x]) < (min_y))
-            min_y = (data[x]);
+        if ( (in_Data[x]) < (min_y))
+            min_y = (in_Data[x]);
     }
 
     Scale[0] = 0;
-    Scale[1] = data.size()-1;
+    Scale[1] = in_Data.size()-1;
     Scale[2] = min_y;
     Scale[3] = max_y;
 
@@ -93,60 +104,57 @@ void Scope::paintEvent(QPaintEvent *)
     painter.drawLine(width(), height() , 0, height());
     painter.drawLine(0, height() , 0,0);
 
-    if (data.size() > 1)
+    for (int data_x = 0; data_x < data.size(); data_x++)
     {
-        //painter.restore();
+        painter.resetMatrix();
 
-        //Scale so that the data is spread on the entire area of the widget
-        float x_denom = abs(Scale[0]) + abs(Scale[1]);
-        float y_denom = abs(Scale[2]) + abs(Scale[3]);
-
-        //assert(x_denom!=0 && y_denom!=0);
-
-        if(debug)
+        int Scale_to_use = 0;
+        int MaxEmphY=0;
+        //Finds the 'biggest' scale
+        for (int i=0; i<Scale.size(); i++)
         {
-            cout<<x_denom<<endl;
-            cout<<y_denom<<endl;
-            cout<<"-"<<endl;
-            cout<<(Scale[0])<<endl;
-            cout<<(Scale[1])<<endl;
-            cout<<(Scale[2])<<endl;
-            cout<<(Scale[3])<<endl;
-            cout<<"---"<<endl;
-            cout<<abs(Scale[0])<<endl;
-            cout<<abs(Scale[1])<<endl;
-            cout<<abs(Scale[2])<<endl;
-            cout<<abs(Scale[3])<<endl;
-            cout<<"+"<<endl;
+            if ( (Scale[i][3] - Scale[i][2]) > MaxEmphY)
+            {
+                MaxEmphY = (Scale[i][3] - Scale[i][2]);
+                Scale_to_use = i;
+            }
+
         }
 
-        float scale_x = width()/(x_denom);
-        float scale_y = height()/(y_denom);
-
-        if(debug)
+        if (data[data_x].size() > 1)
         {
-            cout<<"-=-"<<endl;
-            cout<<scale_x<<endl;
-            cout<<scale_y<<endl;
-        }
+            //Scale so that the data is spread on the entire area of the widget
+            float x_denom = abs(Scale[Scale_to_use][0]) + abs(Scale[Scale_to_use][1]);
+            float y_denom = abs(Scale[Scale_to_use][2]) + abs(Scale[Scale_to_use][3]);
 
-        //Scale the widget
-        //painter.scale( scale_x, scale_y );
+            //assert(x_denom!=0 && y_denom!=0);
 
-        float distanca_from_x_axis = 0;
+            float scale_x = width()/(x_denom);
+            float scale_y = height()/(y_denom);
 
-        if ( Scale[2] < 0)
-            distanca_from_x_axis = Scale[2];
+            float distanca_from_x_axis = 0;
+            if ( Scale[data_x][2] < 0)
+                distanca_from_x_axis = Scale[data_x][2];
 
-        painter.translate( 0, height() + distanca_from_x_axis*scale_y );
+            painter.translate( 0, height() + distanca_from_x_axis*scale_y );
 
-        //Draws the data
-        painter.setPen(Qt::blue);
-        for (unsigned int x= 1; x<data.size(); x++)
-        {
-            //Data_y is reversed to fit an intuitive coordinate system
-            painter.drawLine( int((x-1)*scale_x), int(-data[x-1]*scale_y), int(x*scale_x), int(-data[x]*scale_y) );
-        }
+            //Draws the data
+            if (data_x==0)
+                painter.setPen(Qt::blue);
+            else if (data_x==1)
+                painter.setPen(Qt::red);
+            else if (data_x==2)
+                painter.setPen(Qt::yellow);
+            else
+                painter.setPen(Qt::black);
 
-    }//If data...
+            //cout<<"-------------"<<data_x<<endl;
+            for (unsigned int x= 1; x < data[data_x].size(); x++)
+            {
+                //Data_y is reversed to fit an intuitive coordinate system
+                painter.drawLine( int((x-1)*scale_x), int(-data[data_x][x-1]*scale_y), int(x*scale_x), int(-data[data_x][x]*scale_y) );
+            }
+
+        }//If data...
+    }
 }

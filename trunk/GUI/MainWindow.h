@@ -13,6 +13,7 @@
 #include <QGroupBox>
 #include <QComboBox>
 #include <QPushButton>
+#include <QLabel>
 
 #include "../WinPcapFns.h"
 #include "../ThreadListener.h"
@@ -56,28 +57,50 @@ class MainWindow : public QWidget
         void ChangeDevice();
 
     private:
+        //!GUI fns
+        string getUnits(float nBits);
+        float getDivisor(float nBits);
 
         //!Pcap wrapper
             PcapHandler PCHandler;
 
             //Info on the data
-            double LastAmountData;
-            vector<float> DownloadSpeedHist;
+            float LastAmountData_download;
+            float LastAmountData_upload;
+            float DataDownloadedSinceLastCall;
+            float DataUploadedSinceLastCall;
+
+            vector<float> SpeedHist_Download;
+            vector<float> SpeedHist_Upload;
 
         //!The threaded object that gets data from the wrapper
             ThreadListener * ThreadL;
 
             //Display widgets:
             QGroupBox   *   DownloadUploadGB;
-            QLCDNumber  *   LCDDownloadKB;
-            QLCDNumber  *   LCDUploadKB;
 
-            QComboBox  *   DropListDeviceChoice;
+            QLabel      *   DownloadKBpS;
+            QLabel      *   DownloadKBpS_label;
+            QLabel      *   DownloadKBpS_units;
+
+            QLabel      *   UploadKBpS;
+            QLabel      *   UploadKBpS_label;
+            QLabel      *   UploadKBpS_units;
+
+            QLabel      *   DownloadKBTotal;
+            QLabel      *   DownloadKBTotal_label;
+            QLabel      *   DownloadKBTotal_units;
+
+            QLabel      *   UploadKBTotal;
+            QLabel      *   UploadKBTotal_label;
+            QLabel      *   UploadKBTotal_units;
+
+            QComboBox   *   DropListDeviceChoice;
             QGroupBox   *   DropListDeviceGB;
             QPushButton *   PushBDropListSetToCurrent;
 
             QConsole    *   Console;
-            Scope       *   DownloadScope;
+            Scope       *   dataScope;
 
         //!GUI default values
 

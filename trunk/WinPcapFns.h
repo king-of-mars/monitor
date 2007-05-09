@@ -5,9 +5,17 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <assert.h>
 
 //Unix
 #include "pcap.h"
+
+#ifndef WIN32
+	#include <sys/socket.h>
+	#include <netinet/in.h>
+#else
+	#include <winsock.h>
+#endif
 
 using namespace std;
 
@@ -57,15 +65,22 @@ class PcapHandler
         */
         int CheckIfCurrDeviceReady();
 
+        /*!
+        Gets the device's IP on the subnet
+        */
+        string getDeviceIP(int DeviceNo);
+
         //!Thread-safe function to get TotalDataTransferred_bytes
         //!(Implemented with QMutex)
-        float get_TotalDataTransferred_bytes();
+        float get_TotalDataDownloaded_bytes();
+        float get_TotalDataUploaded_bytes();
 
     private:
 
         //!Thread-safe function to set TotalDataTransferred_bytes
         //!(Implemented with QMutex)
-        void set_TotalDataTransferred_bytes(float TDTb_in);
+        void set_TotalDataDownloaded_bytes(float TDTb_in);
+        void set_TotalDataUploaded_bytes(float TDTb_in);
 
         //!The messages reported by the application
         vector<string> messages;
@@ -86,7 +101,11 @@ class PcapHandler
         pcap_t *adhandle;
 
         //!Total data transmitted in bytes
-        float TotalDataTransferred_bytes;
+        float TotalDataDownloaded_bytes;
+        float TotalDataUploaded_bytes;
+
+        //!The ip address of the current device
+        string IPadd;
 };
 
 /*! 4 bytes IP address */
