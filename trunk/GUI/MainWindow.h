@@ -35,11 +35,11 @@ class MainWindow : public QWidget
         Will open the default device specified in the 'Default_DeviceNo'
         if no argument is specified.
         */
-        void OpenDevice(int DeviceNO= -1);
+        int OpenDevice(int DeviceNO= -1);
 
         //!Starts capturing packets
         //!Has to be run from inside a thread (or will block the app)
-        void StartCapture();
+        int StartCapture();
 
     protected:
        void paintEvent(QPaintEvent *event);
@@ -60,6 +60,7 @@ class MainWindow : public QWidget
         //!GUI fns
         string getUnits(float nBits);
         float getDivisor(float nBits);
+        void clearMemory();
 
         //!Pcap wrapper
             PcapHandler PCHandler;

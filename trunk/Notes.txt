@@ -11,6 +11,7 @@ To do:
     -Have the down/up speed averaged over 'N' samples
     -Scope: Have the different data match strings
     -Save daily stats in a file
+    -Console needs to be able to get message from GUI too
 
 Bugs:
     -In UNIX crashes if started without sudo
