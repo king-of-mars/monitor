@@ -33,6 +33,7 @@ PcapHandler::PcapHandler()
     TotalDataUploaded_bytes = 0.0;
     Ndevices = 0;
     DeviceReady = 0;
+    stopInstructed = false;
 }
 
 void PcapHandler::Print_messages()
@@ -189,7 +190,7 @@ string PcapHandler::getDeviceIP(int DeviceNo)
     pcap_addr_t *a;
     char ip6str[128];
 
-    string IPa;
+    string IPa ="";
     /* IP addresses */
     for(a=Adev->addresses;a;a=a->next) {
         switch(a->addr->sa_family)
@@ -203,16 +204,19 @@ string PcapHandler::getDeviceIP(int DeviceNo)
             }
 
           case AF_INET6:
-            messages.push_back("ERROR: IPV6 detected, this program doesn't support this mode yet.");
-            IPa = "ERROR (IPV6)";
+            messages.push_back("Warning: IPV6 detected, this program doesn't support this mode yet.");
+            //IPa = "ERROR (IPV6)";
             break;
 
           default:
             messages.push_back("ERROR: Can't get the device's IP");
-            IPa = "ERROR (UNKNOWN)";
+            //IPa = "ERROR (UNKNOWN)";
             break;
         }
     }
+
+    if (IPa=="")
+        IPa = "ERROR";
 
     IPadd = IPa;
     return IPa;
@@ -230,7 +234,7 @@ int PcapHandler::StartListenOnDevice_countData()
     //To retreive the source and dest. ips
     ip_header *ih;
 
-    while((res = pcap_next_ex( adhandle, &header, &pkt_data)) >= 0){
+    while(((res = pcap_next_ex( adhandle, &header, &pkt_data)) >= 0) && !stopInstructed ){
 
         if(res == 0)
             /* Timeout elapsed */
@@ -258,6 +262,8 @@ int PcapHandler::StartListenOnDevice_countData()
         if (source_IP == IPadd)
             set_TotalDataUploaded_bytes (get_TotalDataUploaded_bytes() + header->len);
     }
+
+    stopInstructed = false;
 
     if(res == -1)
     {
@@ -287,4 +293,10 @@ void PcapHandler::set_TotalDataDownloaded_bytes(float TDTb_in)
 void PcapHandler::set_TotalDataUploaded_bytes(float TDTb_in)
 {
     TotalDataUploaded_bytes = TDTb_in;
+}
+
+void PcapHandler::instructStop()
+{
+    messages.push_back("Asking the device thread to stop");
+    stopInstructed = true;
 }

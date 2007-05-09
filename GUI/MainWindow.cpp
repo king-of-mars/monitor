@@ -3,7 +3,7 @@
 MainWindow::MainWindow()
 {
     //GUI defaults, have to be loaded from a file
-    Default_DeviceNo = 2;
+    Default_DeviceNo = 1;
 
     //-------------------------------------------
 
@@ -141,13 +141,37 @@ void MainWindow::StartCapture()
 
 void MainWindow::ChangeDevice()
 {
+    cout<<"asd"<<endl;
+
     int device_No = DropListDeviceChoice->currentIndex();
 
-    ThreadL->terminate();
-    ThreadL->wait();
+    cout<<"asd"<<endl;
+
+    ThreadL->instructStop();
+    if(!ThreadL->wait(5000))
+    {
+        //Console.Display_Messages("ERROR: Thread didn't stop properly, process had to be killed.");
+        //messages.push_back
+        //messages.push_back("Please restart the application");
+        cout<<"Error stopping thread"<<endl;
+
+        //Memory leak!
+        PcapHandler freshPCH;
+        PCHandler = freshPCH;
+        delete ThreadL;
+        ThreadL = new ThreadListener(&PCHandler);
+    }
+
+
+    cout<<"asd"<<endl;
 
     OpenDevice(device_No+1);
+
+    cout<<"asd"<<endl;
+
     StartCapture();
+
+    cout<<"asd"<<endl;
 }
 
 string MainWindow::getUnits(float nBits)
@@ -156,8 +180,10 @@ string MainWindow::getUnits(float nBits)
         return "B";
     if ( nBits < 1024.0 * 1024.0 )
         return "Kb";
-    else
+    if ( nBits < 1024.0 * 1024.0 * 1024.0 )
         return "Mb";
+    else
+        return "Gb";
 }
 
 float MainWindow::getDivisor(float nBits)
@@ -166,8 +192,10 @@ float MainWindow::getDivisor(float nBits)
         return 1.0f;
     if ( nBits < 1024.0 * 1024.0 )
         return 1024.0f;
-    else
+    if ( nBits < 1024.0 * 1024.0 * 1024.0 )
         return 1024.0f*1024.0f;
+    else
+        return 1024.0f*1024.0f*1024.0f;
 }
 
 void MainWindow::paintEvent(QPaintEvent *event)
