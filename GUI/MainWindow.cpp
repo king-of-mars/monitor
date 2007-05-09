@@ -99,7 +99,12 @@ MainWindow::MainWindow()
 
     ThreadL = new ThreadListener(&PCHandler);
 
+    cout<<"Attempting to open device"<<endl;
+
     OpenDevice();
+
+    cout<<"Attempting to start capture device"<<endl;
+
     StartCapture();
 
     SpeedHist_Download = vector<float>(256,0);
@@ -109,10 +114,12 @@ MainWindow::MainWindow()
     connect( PushBDropListSetToCurrent, SIGNAL( clicked() ), this, SLOT(ChangeDevice()));
 }
 
-void MainWindow::OpenDevice(int DeviceNO)
+int MainWindow::OpenDevice(int DeviceNO)
 {
     vector<string> * Devices = new vector<string>;
     PCHandler.FindAvailDevices(Devices);
+
+    cout<<"Availables devices"<<endl;
 
     DropListDeviceChoice->clear();
     for(int x=0; x< Devices->size();x++)
@@ -128,50 +135,57 @@ void MainWindow::OpenDevice(int DeviceNO)
     else
         Device_to_Open = Default_DeviceNo;
 
+    if ( Devices->size() < 1 )
+    {
+        cout<<"No device available. (Linux-> Sudo?)"<<endl;
+        return -1;
+    }
+
+    if ( (Device_to_Open < 1) || (Device_to_Open > Devices->size()) )
+    {
+        cout<<"Invalid device number or default device, trying device #1."<<endl;
+        Device_to_Open = 1;
+    }
+
     PCHandler.getDeviceIP(Device_to_Open);
     PCHandler.openDevice(Device_to_Open);
 
     DropListDeviceChoice->setCurrentIndex(Device_to_Open-1);
+
+    return 0;
 }
 
-void MainWindow::StartCapture()
+int MainWindow::StartCapture()
 {
     ThreadL->start();
+    return 0;
 }
 
 void MainWindow::ChangeDevice()
 {
-    cout<<"asd"<<endl;
-
     int device_No = DropListDeviceChoice->currentIndex();
 
-    cout<<"asd"<<endl;
-
     ThreadL->instructStop();
-    if(!ThreadL->wait(5000))
+    if(!ThreadL->wait(2500))
     {
         //Console.Display_Messages("ERROR: Thread didn't stop properly, process had to be killed.");
         //messages.push_back
         //messages.push_back("Please restart the application");
         cout<<"Error stopping thread"<<endl;
 
-        //Memory leak!
+        ThreadL->terminate();//Very dangerous
+        ThreadL->wait(500);
+
+        //Memory leak?
         PcapHandler freshPCH;
         PCHandler = freshPCH;
         delete ThreadL;
         ThreadL = new ThreadListener(&PCHandler);
     }
 
-
-    cout<<"asd"<<endl;
-
+    clearMemory();
     OpenDevice(device_No+1);
-
-    cout<<"asd"<<endl;
-
     StartCapture();
-
-    cout<<"asd"<<endl;
 }
 
 string MainWindow::getUnits(float nBits)
@@ -251,5 +265,23 @@ void MainWindow::updateKBPS()
 
     dataScope->Set_Data(SpeedHist_Download, 0);
     dataScope->Set_Data(SpeedHist_Upload, 1);
+}
+
+void MainWindow::clearMemory()
+{
+
+    for (int x=0; x< SpeedHist_Download.size(); x++)
+    {
+        SpeedHist_Download[x] = 0.0;
+    }
+    for (int x=0; x< SpeedHist_Upload.size(); x++)
+    {
+        SpeedHist_Upload[x] = 0.0;
+    }
+
+    LastAmountData_download=0.0;
+    LastAmountData_upload=0.0;
+    DataDownloadedSinceLastCall=0.0;
+    DataUploadedSinceLastCall=0.0;
 }
 

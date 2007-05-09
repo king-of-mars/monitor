@@ -84,7 +84,7 @@ int PcapHandler::FindAvailDevices(vector<string> * outDevices)
 		}
 		else
 		{
-            Ddesc = "Error, no description available";
+            Ddesc = "No description available";
 		}
 
 		i++;
@@ -97,6 +97,7 @@ int PcapHandler::FindAvailDevices(vector<string> * outDevices)
 	if(i==0)
 	{
         messages.push_back("Error: no interfaces found! Make sure WinPcap(Windows) or pcap(Unix) is installed.");
+        messages.push_back("If the application is running under Linux, make sure to run it as root. (sudo appname).");
         pcap_freealldevs(alldevs);
 		return(-1);
 	}
@@ -204,12 +205,12 @@ string PcapHandler::getDeviceIP(int DeviceNo)
             }
 
           case AF_INET6:
-            messages.push_back("Warning: IPV6 detected, this program doesn't support this mode yet.");
+            //messages.push_back("Warning: IPV6 detected, this program doesn't support this mode yet.");
             //IPa = "ERROR (IPV6)";
             break;
 
           default:
-            messages.push_back("ERROR: Can't get the device's IP");
+            //messages.push_back("ERROR: Can't get the device's IP");
             //IPa = "ERROR (UNKNOWN)";
             break;
         }
