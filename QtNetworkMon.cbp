@@ -25,8 +25,12 @@
 			<Add option="-g" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="GUI\Console.cpp" />
+		<Unit filename="GUI\Console.h" />
 		<Unit filename="GUI\MainWindow.cpp" />
 		<Unit filename="GUI\MainWindow.h" />
+		<Unit filename="GUI\Scope.cpp" />
+		<Unit filename="GUI\Scope.h" />
 		<Unit filename="Notes.txt" />
 		<Unit filename="QtNetworkMon.pro" />
 		<Unit filename="ThreadListener.cpp" />

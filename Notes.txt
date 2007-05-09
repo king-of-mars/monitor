@@ -2,9 +2,14 @@ To do:
     -Has to listen to the default device automatically
     -Implement a message handler (console)
     -Change the current device using a dropbox
-    -Safe threads (mutex)
     -Discriminate download/upload
     -Tray Icon
+    -Win Installer that installs dependencies automatically
+    -Web site with user comments
+    -Scope Minimal Size (Qt)
+    -Load GUI options from config file
+    -Harmonize comments with Doxygen
+    -Check if it is worth using the UI builder
 
 Bugs:
     -In UNIX crashes if started without sudo

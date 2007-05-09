@@ -29,7 +29,9 @@ string ip_to_String(int a,int b, int c, int d)
 
 PcapHandler::PcapHandler()
 {
-    TotalDataTransferred_bytes=0.0;
+    TotalDataTransferred_bytes = 0.0;
+    Ndevices = 0;
+    DeviceReady = 0;
 }
 
 void PcapHandler::Print_messages()
@@ -42,11 +44,16 @@ void PcapHandler::Print_messages()
 
 vector<string> PcapHandler::get_messages()
 {
-    return messages;
+    vector<string> out_messages = messages;
+    messages.clear();
+    return out_messages;
 }
 
-int PcapHandler::FindAvailDevices()
+int PcapHandler::FindAvailDevices(vector<string> * outDevices)
 {
+    if (outDevices!= NULL)
+        outDevices->clear();
+
 	pcap_if_t *d;// Iterator
 	char errbuf[PCAP_ERRBUF_SIZE];
 
@@ -66,20 +73,23 @@ int PcapHandler::FindAvailDevices()
 	    if (i==0)
             messages.push_back("Found available devices:");
 
-        messages.push_back(d->name);
+        string Dname(d->name);
+        string Ddesc;
 
-        /*
 		if (d->description)
 		{
-            printf(" (%s)\n", d->description);
-            cout<<d->description<<endl;
+            Ddesc = d->description;
 		}
 		else
 		{
-            printf(" (Error: No description available)\n");
+            Ddesc = "Error, no description available";
 		}
-		*/
+
 		i++;
+		Ndevices = i;
+
+        outDevices->push_back(int_to_string(i) + ": " + Dname + " : " + Ddesc);
+		messages.push_back(int_to_string(i) + ": " + Dname + " : " + Ddesc);
 	}
 
 	if(i==0)
@@ -97,11 +107,13 @@ int PcapHandler::openDevice(int inum)
     pcap_if_t *d; //Iterator
     char errbuf[PCAP_ERRBUF_SIZE];
 
-    if(inum < 1 )//|| inum > i
+    if(inum < 1 || inum > Ndevices)
     {
-        printf("\nInterface number out of range.\n");
-        /* Free the device list */
+        messages.push_back("Interface number out of range.");
 
+        /* Free the device list */
+        DeviceReady = -1;
+        pcap_freealldevs(alldevs);
         return -1;
     }
 
@@ -119,7 +131,9 @@ int PcapHandler::openDevice(int inum)
                              errbuf			// error buffer
                              )) == NULL)
     {
-        fprintf(stderr,"\nUnable to open the adapter. %s is not supported by WinPcap\n", d->name);
+        string device_name(d->name);
+        messages.push_back("Unable to open the adapter, device '" + device_name + "' is not supported by WinPcap");
+
         /* Free the device list */
         pcap_freealldevs(alldevs);
         return -1;
@@ -128,54 +142,29 @@ int PcapHandler::openDevice(int inum)
     /* At this point, we don't need any more the device list. Free it */
     pcap_freealldevs(alldevs);
 
+    DeviceReady = 1;
     return 0;
 }
 
-int PcapHandler::StartListenOnDevice_outputLength()
+int PcapHandler::CheckIfCurrDeviceReady()
 {
-    //messages.push_back("\nlistening on %s...\n", d->description);
-    messages.push_back("Listening on device...");
-
-    /* Retrieve the packets */
-    int res=0;
-    struct pcap_pkthdr *header;
-    const u_char *pkt_data;
-    time_t local_tv_sec;
-    struct tm *ltime;
-    char timestr[16];
-
-      while((res = pcap_next_ex( adhandle, &header, &pkt_data)) >= 0){
-
-        if(res == 0)
-            /* Timeout elapsed */
-            continue;
-
-        /* convert the timestamp to readable format */
-        local_tv_sec = header->ts.tv_sec;
-        ltime=localtime(&local_tv_sec);
-        strftime( timestr, sizeof timestr, "%H:%M:%S", ltime);
-
-        printf("%s,%.6d len:%d\n", timestr, header->ts.tv_usec, header->len);
+    if (DeviceReady==1)
+        return 1;
+    else
+    {
+        messages.push_back("Device is not ready to use.");
+        return 0;
     }
-
-    if(res == -1){
-        printf("Error reading the packets: %s\n", pcap_geterr(adhandle));
-        return -1;
-    }
-
-
-    messages.push_back("Done listening...");
-    return 0;
 }
 
 int PcapHandler::StartListenOnDevice_countData()
 {
+    if (!CheckIfCurrDeviceReady())
+        return CheckIfCurrDeviceReady();
+
     int res=0;
     struct pcap_pkthdr *header;
     const u_char *pkt_data;
-    time_t local_tv_sec;
-    struct tm *ltime;
-    char timestr[16];
 
     //To retreive the source and dest. ips
     ip_header *ih;
@@ -209,10 +198,14 @@ int PcapHandler::StartListenOnDevice_countData()
         //printf("%d.%d.%d.%d. -> %d.%d.%d.%d.\n",
     }
 
-    if(res == -1){
-        printf("Error reading the packets: %s\n", pcap_geterr(adhandle));
+    if(res == -1)
+    {
+        string error_rep(pcap_geterr(adhandle));
+        messages.push_back("Error reading the packets:" + error_rep);
         return -1;
     }
+
+    return 0;
 }
 
 float PcapHandler::get_TotalDataTransferred_bytes()
