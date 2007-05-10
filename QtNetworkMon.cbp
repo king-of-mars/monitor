@@ -33,6 +33,7 @@
 		<Unit filename="GUI\Scope.h" />
 		<Unit filename="Notes.txt" />
 		<Unit filename="QtNetworkMon.pro" />
+		<Unit filename="Ressources.qrc" />
 		<Unit filename="ThreadListener.cpp" />
 		<Unit filename="ThreadListener.h" />
 		<Unit filename="WinPcapFns.cpp" />
