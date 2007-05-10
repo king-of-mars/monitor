@@ -57,6 +57,11 @@ class PcapHandler
         */
         int StartListenOnDevice_countData();
 
+        /*!
+        Changes the 'stopInstructed' value tu true, this value
+        should then be refered to in inner loops to exit the loop
+        without having to kill the process.
+        */
         void instructStop();
 
         /*!
@@ -72,10 +77,11 @@ class PcapHandler
         */
         string getDeviceIP(int DeviceNo);
 
-        //!Thread-safe function to get TotalDataTransferred_bytes
-        //!(Implemented with QMutex)
         float get_TotalDataDownloaded_bytes();
         float get_TotalDataUploaded_bytes();
+
+        //!Erase the data gathered from the device
+        //!(i.e.: amount of data downloaded)
         void resetMemory();
 
     private:

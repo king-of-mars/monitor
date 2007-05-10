@@ -110,9 +110,6 @@ MainWindow::MainWindow()
     SpeedHist_Download = vector<float>(256,0);
     SpeedHist_Upload = vector<float>(256,0);
 
-    //Signals/Slots
-    connect( PushBDropListSetToCurrent, SIGNAL( clicked() ), this, SLOT(ChangeDevice()));
-
     //Tray
     setWindowIcon(QIcon(":/GFX/systray/trash.svg"));
 
@@ -121,30 +118,41 @@ MainWindow::MainWindow()
 
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setIcon((QIcon(":/GFX/systray/TrayIconNormal.png")));
+
     trayIconMenu = new QMenu(this);
-    //trayIconMenu->addAction(minimizeAction);
-    //trayIconMenu->addAction(maximizeAction);
-    //trayIconMenu->addAction(restoreAction);
-    trayIconMenu->addSeparator();
+    trayIconMenu->setIcon((QIcon(":/GFX/systray/TrayIconNormal.png")));
     trayIconMenu->addAction(quitAction);
 
     trayIcon->setContextMenu(trayIconMenu);
     //trayIcon->setVisible(true);
+
+    //Signals/Slots
+    connect( PushBDropListSetToCurrent, SIGNAL( clicked() ), this, SLOT(ChangeDevice()) );
+    connect( trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason) ),
+             this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)) );
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     trayIcon->setVisible(true);
 
-    if (trayIcon->isVisible()) {
-     QMessageBox::information(this, tr("Systray"),
-                              tr("The program will keep running in the "
-                                 "system tray. To terminate the program, "
-                                 "choose <b>Quit</b> in the context menu "
-                                 "that pops up when clicking this program's "
-                                 "entry in the system tray."));
-     hide();
-     event->ignore();
+    if (trayIcon->isVisible())
+    {
+    hide();
+    event->ignore();
+    }
+}
+
+void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    switch (reason)
+    {
+    case QSystemTrayIcon::Trigger:
+    case QSystemTrayIcon::DoubleClick:
+    //trayIcon->setVisible(false);
+    show();
+
+    default:;
     }
 }
 
