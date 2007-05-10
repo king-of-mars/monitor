@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+    <file>GFX/systray/bad.svg</file>
+    <file>GFX/systray/heart.svg</file>
+    <file>GFX/systray/trash.svg</file>
+</qresource>
+</RCC>
