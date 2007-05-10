@@ -120,7 +120,7 @@ MainWindow::MainWindow()
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
     trayIcon = new QSystemTrayIcon(this);
-    trayIcon->setIcon((QIcon(":/GFX/systray/heart.svg")));
+    trayIcon->setIcon((QIcon(":/GFX/systray/TrayIconNormal.png")));
     trayIconMenu = new QMenu(this);
     //trayIconMenu->addAction(minimizeAction);
     //trayIconMenu->addAction(maximizeAction);

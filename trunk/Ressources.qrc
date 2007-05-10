@@ -3,5 +3,6 @@
     <file>GFX/systray/bad.svg</file>
     <file>GFX/systray/heart.svg</file>
     <file>GFX/systray/trash.svg</file>
+    <file>GFX/systray/TrayIconNormal.png</file>
 </qresource>
 </RCC>
