@@ -9,4 +9,5 @@ INPUT(
 ./debug\moc_MainWindow.o
 ./debug\moc_Scope.o
 ./debug\moc_Console.o
+./debug\qrc_Ressources.o
 );

@@ -3,7 +3,7 @@
 MainWindow::MainWindow()
 {
     //GUI defaults, have to be loaded from a file
-    Default_DeviceNo = 1;
+    Default_DeviceNo = 2;
 
     //-------------------------------------------
 
@@ -112,6 +112,40 @@ MainWindow::MainWindow()
 
     //Signals/Slots
     connect( PushBDropListSetToCurrent, SIGNAL( clicked() ), this, SLOT(ChangeDevice()));
+
+    //Tray
+    setWindowIcon(QIcon(":/GFX/systray/trash.svg"));
+
+    quitAction = new QAction(tr("&Quit"), this);
+    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+
+    trayIcon = new QSystemTrayIcon(this);
+    trayIcon->setIcon((QIcon(":/GFX/systray/heart.svg")));
+    trayIconMenu = new QMenu(this);
+    //trayIconMenu->addAction(minimizeAction);
+    //trayIconMenu->addAction(maximizeAction);
+    //trayIconMenu->addAction(restoreAction);
+    trayIconMenu->addSeparator();
+    trayIconMenu->addAction(quitAction);
+
+    trayIcon->setContextMenu(trayIconMenu);
+    //trayIcon->setVisible(true);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    trayIcon->setVisible(true);
+
+    if (trayIcon->isVisible()) {
+     QMessageBox::information(this, tr("Systray"),
+                              tr("The program will keep running in the "
+                                 "system tray. To terminate the program, "
+                                 "choose <b>Quit</b> in the context menu "
+                                 "that pops up when clicking this program's "
+                                 "entry in the system tray."));
+     hide();
+     event->ignore();
+    }
 }
 
 int MainWindow::OpenDevice(int DeviceNO)
@@ -283,5 +317,7 @@ void MainWindow::clearMemory()
     LastAmountData_upload=0.0;
     DataDownloadedSinceLastCall=0.0;
     DataUploadedSinceLastCall=0.0;
+
+    PCHandler.resetMemory();
 }
 

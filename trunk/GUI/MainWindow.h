@@ -7,13 +7,15 @@
 #include <QLabel>
 #include <QTimer>
 #include <QDockWidget>
-#include <QLCDNumber>
 #include <QVBoxLayout>
 #include <QTextEdit>
 #include <QGroupBox>
 #include <QComboBox>
 #include <QPushButton>
 #include <QLabel>
+#include <QSystemTrayIcon>
+#include <QMessageBox>
+#include <QtGui>
 
 #include "../WinPcapFns.h"
 #include "../ThreadListener.h"
@@ -43,6 +45,7 @@ class MainWindow : public QWidget
 
     protected:
        void paintEvent(QPaintEvent *event);
+       void closeEvent(QCloseEvent *event);
 
     private slots:
         /*!
@@ -102,6 +105,15 @@ class MainWindow : public QWidget
 
             QConsole    *   Console;
             Scope       *   dataScope;
+
+            //Tray
+            QComboBox * iconComboBox;
+            QSystemTrayIcon *trayIcon;
+            QMenu *trayIconMenu;
+            QAction *minimizeAction;
+            QAction *maximizeAction;
+            QAction *restoreAction;
+            QAction *quitAction;
 
         //!GUI default values
 
