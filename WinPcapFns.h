@@ -76,6 +76,7 @@ class PcapHandler
         //!(Implemented with QMutex)
         float get_TotalDataDownloaded_bytes();
         float get_TotalDataUploaded_bytes();
+        void resetMemory();
 
     private:
 

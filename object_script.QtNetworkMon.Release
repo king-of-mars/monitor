@@ -9,4 +9,5 @@ INPUT(
 ./release\moc_MainWindow.o
 ./release\moc_Scope.o
 ./release\moc_Console.o
+./release\qrc_Ressources.o
 );

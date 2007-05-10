@@ -7,8 +7,7 @@ TARGET = QtNetworkMon
 
 INCLUDEPATH += .
 CONFIG += console
-QT += network
-
+RESOURCES = Ressources.qrc
 win32{
     INCLUDEPATH += ./Wdp/include
     LIBS += -L ./Wdp/lib -lwpcap

@@ -301,3 +301,9 @@ void PcapHandler::instructStop()
     messages.push_back("Asking the device thread to stop");
     stopInstructed = true;
 }
+
+void PcapHandler::resetMemory()
+{
+    TotalDataDownloaded_bytes = 0.0f;
+    TotalDataUploaded_bytes = 0.0f;
+}
