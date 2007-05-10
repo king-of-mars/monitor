@@ -6,11 +6,17 @@ TEMPLATE = app
 TARGET = QtNetworkMon
 
 INCLUDEPATH += .
-CONFIG += console
+
+#CONFIG += console
+
 RESOURCES = Ressources.qrc
+
 win32{
     INCLUDEPATH += ./Wdp/include
     LIBS += -L ./Wdp/lib -lwpcap
+
+    #For the win32 icon
+    RC_FILE = setIcon.rc
 }
 
 unix{

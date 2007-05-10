@@ -7,11 +7,11 @@
 	<File name="GUI\Console.h" open="0" top="0" tabpos="0">
 		<Cursor position="262" topLine="0" />
 	</File>
-	<File name="GUI\MainWindow.cpp" open="1" top="1" tabpos="1">
-		<Cursor position="4426" topLine="118" />
+	<File name="GUI\MainWindow.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="4549" topLine="127" />
 	</File>
 	<File name="GUI\MainWindow.h" open="1" top="0" tabpos="2">
-		<Cursor position="2938" topLine="98" />
+		<Cursor position="1095" topLine="35" />
 	</File>
 	<File name="GUI\Scope.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="334" topLine="0" />
@@ -34,8 +34,8 @@
 	<File name="ThreadListener.h" open="0" top="0" tabpos="5">
 		<Cursor position="169" topLine="4" />
 	</File>
-	<File name="WinPcapFns.cpp" open="1" top="0" tabpos="5">
-		<Cursor position="7682" topLine="282" />
+	<File name="WinPcapFns.cpp" open="1" top="1" tabpos="5">
+		<Cursor position="6639" topLine="243" />
 	</File>
 	<File name="WinPcapFns.h" open="1" top="0" tabpos="4">
 		<Cursor position="2788" topLine="81" />

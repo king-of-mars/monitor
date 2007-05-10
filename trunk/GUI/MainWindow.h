@@ -59,6 +59,9 @@ class MainWindow : public QWidget
         */
         void ChangeDevice();
 
+       //!What to do when the tray icon is clicked
+       void iconActivated(QSystemTrayIcon::ActivationReason reason);
+
     private:
         //!GUI fns
         string getUnits(float nBits);
