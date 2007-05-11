@@ -7,7 +7,7 @@ TARGET = QtNetworkMon
 
 INCLUDEPATH += .
 
-#CONFIG += console
+CONFIG += console
 
 RESOURCES = Ressources.qrc
 
@@ -29,7 +29,7 @@ HEADERS += WinPcapFns.h \
             GUI\MainWindow.h \
             GUI\Scope.h \
             GUI\Console.h \
-            GUI\ReadWriteFile.h \
+            IO\ReadWriteFile.h \
 
 SOURCES += main.cpp \
             ThreadListener.cpp \
@@ -37,4 +37,4 @@ SOURCES += main.cpp \
             GUI\MainWindow.cpp \
             GUI\Scope.cpp \
             GUI\Console.cpp \
-            GUI\ReadWriteFile.cpp \
+            IO\ReadWriteFile.cpp \

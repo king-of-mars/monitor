@@ -31,6 +31,8 @@
 		<Unit filename="GUI\MainWindow.h" />
 		<Unit filename="GUI\Scope.cpp" />
 		<Unit filename="GUI\Scope.h" />
+		<Unit filename="IO\ReadWriteFile.cpp" />
+		<Unit filename="IO\ReadWriteFile.h" />
 		<Unit filename="Notes.txt" />
 		<Unit filename="QtNetworkMon.pro" />
 		<Unit filename="Ressources.qrc" />

@@ -130,6 +130,22 @@ MainWindow::MainWindow()
     connect( PushBDropListSetToCurrent, SIGNAL( clicked() ), this, SLOT(ChangeDevice()) );
     connect( trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason) ),
              this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)) );
+
+    //Set the data offset
+    InfoReadWrite Reader;
+    Reader.Read("Stats.dat");
+
+    if( Reader.getData().size() >= 2 )
+    {
+        Download_offset = Reader.getData()[0];
+        Upload_offset   = Reader.getData()[1];
+    }
+    else
+    {
+        Download_offset=0.0f;
+        Upload_offset=0.0f;
+        cout<<"There was a problem reading the stats file."<<endl;
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -260,14 +276,17 @@ void MainWindow::paintEvent(QPaintEvent *event)
     QString DownloadKBTot_S;
     QString UploadKBTot_S;
 
-    float divisor = getDivisor( PCHandler.get_TotalDataDownloaded_bytes() );
-    DownloadKBTotal->setText( DownloadKBTot_S.setNum( (int) (PCHandler.get_TotalDataDownloaded_bytes() / divisor) ) );
-    QString DownloadKBTotal_units_S = QString( getUnits(PCHandler.get_TotalDataDownloaded_bytes()).c_str());
+    float DataDownloadedSoFar = PCHandler.get_TotalDataDownloaded_bytes() + Download_offset;
+    float DataUploadedSoFar = PCHandler.get_TotalDataUploaded_bytes() + Upload_offset;
+
+    float divisor = getDivisor( DataDownloadedSoFar );
+    DownloadKBTotal->setText( DownloadKBTot_S.setNum( (int) (DataDownloadedSoFar / divisor) ) );
+    QString DownloadKBTotal_units_S = QString( getUnits(DataDownloadedSoFar).c_str());
     DownloadKBTotal_units->setText(DownloadKBTotal_units_S);
 
-    divisor = getDivisor( PCHandler.get_TotalDataUploaded_bytes() );
-    UploadKBTotal->setText( UploadKBTot_S.setNum( (int) (PCHandler.get_TotalDataUploaded_bytes() / (divisor) ) ) );
-    QString UploadKBTotal_units_S = QString( getUnits(PCHandler.get_TotalDataUploaded_bytes()).c_str());
+    divisor = getDivisor( DataUploadedSoFar );
+    UploadKBTotal->setText( UploadKBTot_S.setNum( (int) (DataUploadedSoFar / (divisor) ) ) );
+    QString UploadKBTotal_units_S = QString( getUnits( DataUploadedSoFar ).c_str());
     UploadKBTotal_units->setText(UploadKBTotal_units_S);
 
     //kb/s:
@@ -291,12 +310,12 @@ void MainWindow::paintEvent(QPaintEvent *event)
 void MainWindow::updateKBPS()
 {
     DataDownloadedSinceLastCall =
-    (PCHandler.get_TotalDataDownloaded_bytes())-LastAmountData_download;
-    LastAmountData_download = (PCHandler.get_TotalDataDownloaded_bytes());
+    (PCHandler.get_TotalDataDownloaded_bytes() + Download_offset)-LastAmountData_download;
+    LastAmountData_download = (PCHandler.get_TotalDataDownloaded_bytes() + Download_offset);
 
     DataUploadedSinceLastCall =
-    (PCHandler.get_TotalDataUploaded_bytes())-LastAmountData_upload;
-    LastAmountData_upload = (PCHandler.get_TotalDataUploaded_bytes());
+    (PCHandler.get_TotalDataUploaded_bytes() + Upload_offset)-LastAmountData_upload;
+    LastAmountData_upload = (PCHandler.get_TotalDataUploaded_bytes() + Upload_offset);
 
     //Push one in, remove one
     SpeedHist_Download.push_back( DataDownloadedSinceLastCall );
@@ -307,11 +326,18 @@ void MainWindow::updateKBPS()
 
     dataScope->Set_Data(SpeedHist_Download, 0);
     dataScope->Set_Data(SpeedHist_Upload, 1);
+
+    //Save the data to a file
+    InfoReadWrite Writer;
+    vector<float> data_out;
+    data_out.push_back( PCHandler.get_TotalDataDownloaded_bytes() + Download_offset);
+    data_out.push_back( PCHandler.get_TotalDataUploaded_bytes() + Upload_offset);
+    Writer.setData(data_out);
+    Writer.Write("Stats.dat");
 }
 
 void MainWindow::clearMemory()
 {
-
     for (int x=0; x< SpeedHist_Download.size(); x++)
     {
         SpeedHist_Download[x] = 0.0;
