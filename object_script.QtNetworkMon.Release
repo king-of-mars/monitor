@@ -5,6 +5,7 @@ INPUT(
 ./release\MainWindow.o
 ./release\Scope.o
 ./release\Console.o
+./release\ReadWriteFile.o
 ./release\moc_ThreadListener.o
 ./release\moc_MainWindow.o
 ./release\moc_Scope.o

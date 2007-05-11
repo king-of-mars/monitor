@@ -21,6 +21,7 @@
 #include "../ThreadListener.h"
 #include "Scope.h"
 #include "Console.h"
+#include "./IO/ReadWriteFile.h"
 
 class MainWindow : public QWidget
 {
@@ -29,7 +30,6 @@ class MainWindow : public QWidget
     public:
 
         MainWindow();
-
         /*!
         Opens the Network device using the wrapper defined in
         WinPcapFns.h
@@ -76,6 +76,10 @@ class MainWindow : public QWidget
             float LastAmountData_upload;
             float DataDownloadedSinceLastCall;
             float DataUploadedSinceLastCall;
+            //!Data that was downloaded from a previous session
+            float Download_offset;
+            //!Data that was uploaded from a previous session
+            float Upload_offset;
 
             vector<float> SpeedHist_Download;
             vector<float> SpeedHist_Upload;

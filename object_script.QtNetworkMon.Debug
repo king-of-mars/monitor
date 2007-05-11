@@ -5,6 +5,7 @@ INPUT(
 ./debug\MainWindow.o
 ./debug\Scope.o
 ./debug\Console.o
+./debug\ReadWriteFile.o
 ./debug\moc_ThreadListener.o
 ./debug\moc_MainWindow.o
 ./debug\moc_Scope.o
