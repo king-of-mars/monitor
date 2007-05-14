@@ -12,6 +12,8 @@ belong to any of the other modules specifically.
 #include <time.h>
 #include <stdio.h>
 
+#include <assert.h>
+
 using namespace std;
 
 //Conversions:
