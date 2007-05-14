@@ -20,10 +20,10 @@ Scope::Scope(QWidget *parent)
 void Scope::Set_Data(vector<float> data_in, int target)
 {
     assert( target >= 0 );
-    assert( target < data.size() +1 );
+    assert( target < (int)data.size() +1 );
 
     //The data about to be pushed needs to be intialized in the vector
-    if( target == data.size())
+    if( target == (int)data.size())
     {
         data.push_back( data_in );
         vector<float> newData;
@@ -104,18 +104,18 @@ void Scope::paintEvent(QPaintEvent *)
     painter.drawLine(width(), height() , 0, height());
     painter.drawLine(0, height() , 0,0);
 
-    for (int data_x = 0; data_x < data.size(); data_x++)
+    for (unsigned int data_x = 0; data_x < data.size(); data_x++)
     {
         painter.resetMatrix();
 
         int Scale_to_use = 0;
         int MaxEmphY=0;
         //Finds the 'biggest' scale
-        for (int i=0; i<Scale.size(); i++)
+        for (unsigned int i=0; i<Scale.size(); i++)
         {
             if ( (Scale[i][3] - Scale[i][2]) > MaxEmphY)
             {
-                MaxEmphY = (Scale[i][3] - Scale[i][2]);
+                MaxEmphY = (int)(Scale[i][3] - Scale[i][2]);
                 Scale_to_use = i;
             }
 
@@ -140,7 +140,7 @@ void Scope::paintEvent(QPaintEvent *)
 
             //Draws the data
             if (data_x==0)
-                painter.setPen(Qt::blue);
+                painter.setPen(Qt::green);
             else if (data_x==1)
                 painter.setPen(Qt::red);
             else if (data_x==2)

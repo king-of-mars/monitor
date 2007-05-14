@@ -9,7 +9,7 @@ To do:
     -CPU consuption (scope)
     -Have the down/up speed averaged over 'N' samples
     -Scope: Have the different data match strings
-    -Save daily/... stats in a file
+    -Save daily/... stats in a file (.html...?)
     -Console needs to be able to get message from GUI too
     -Show/Hide parts of the widget (console and device select)
     -Seperate the GUI build commands in functions (getting too big)

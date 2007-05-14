@@ -1,6 +1,7 @@
 INPUT(
 ./release\main.o
 ./release\ThreadListener.o
+./release\Misc.o
 ./release\WinPcapFns.o
 ./release\MainWindow.o
 ./release\Scope.o

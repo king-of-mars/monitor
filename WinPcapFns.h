@@ -17,6 +17,8 @@
 	#include <winsock.h>
 #endif
 
+#include "Misc.h"
+
 using namespace std;
 
 /*!

@@ -10,6 +10,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+
     cout<<"App. Begin"<<endl;
 
     QApplication app(argc, argv);
@@ -21,4 +22,5 @@ int main(int argc, char *argv[])
     cout<<"App. End"<<endl;
 
     return return_v;
+
 }
