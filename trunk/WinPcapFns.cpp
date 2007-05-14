@@ -1,32 +1,5 @@
 #include "WinPcapFns.h"
 
-//-------------Little useful functions-----------
-string int_to_string(int Iin)
-{
-    std::stringstream ss;
-    std::string str;
-    ss << Iin;
-    ss >> str;
-
-    return str;
-}
-
-string ip_to_String(int a,int b, int c, int d)
-{
-    string ip;
-    ip.append(int_to_string(a));
-    ip.append(".");
-    ip.append(int_to_string(b));
-    ip.append(".");
-    ip.append(int_to_string(c));
-    ip.append(".");
-    ip.append(int_to_string(d));
-
-    return ip;
-}
-
-//-----------------------------------------------
-
 PcapHandler::PcapHandler()
 {
     TotalDataDownloaded_bytes = 0.0;
@@ -189,7 +162,6 @@ string PcapHandler::getDeviceIP(int DeviceNo)
     }
 
     pcap_addr_t *a;
-    char ip6str[128];
 
     string IPa ="";
     /* IP addresses */

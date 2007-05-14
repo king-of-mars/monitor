@@ -7,7 +7,8 @@
 #include <assert.h>
 #include <vector>
 #include <stdlib.h>
-#include <sstream>
+
+#include "../Misc.h"
 
 using namespace std;
 
@@ -21,11 +22,18 @@ class InfoReadWrite
 
     //!Read the class from a file
     void Read(string filename);
+
     //!Write the class to a file
     void Write(string filename);
 
+    //!Returns the expected data
     vector<float> getData();
+
+    //!Saves the members to a file
     void setData(vector<float> in);
+
+    //!Returns the timestamp of the file read.
+    string get_timestamp();
 
     private:
 
@@ -46,6 +54,7 @@ class InfoReadWrite
     //Data that is read/written
     float DownloadB;
     float UploadB;
+    string Timestamp;
 };
 
 #endif

@@ -7,7 +7,7 @@ TARGET = QtNetworkMon
 
 INCLUDEPATH += .
 
-CONFIG += console
+#CONFIG += console
 
 RESOURCES = Ressources.qrc
 
@@ -25,6 +25,7 @@ unix{
 
 # Input
 HEADERS += WinPcapFns.h \
+            Misc.h \
             ThreadListener.h \
             GUI\MainWindow.h \
             GUI\Scope.h \
@@ -33,6 +34,7 @@ HEADERS += WinPcapFns.h \
 
 SOURCES += main.cpp \
             ThreadListener.cpp \
+            Misc.cpp \
             WinPcapFns.cpp \
             GUI\MainWindow.cpp \
             GUI\Scope.cpp \

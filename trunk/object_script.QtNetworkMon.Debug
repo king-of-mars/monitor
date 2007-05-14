@@ -1,6 +1,7 @@
 INPUT(
 ./debug\main.o
 ./debug\ThreadListener.o
+./debug\Misc.o
 ./debug\WinPcapFns.o
 ./debug\MainWindow.o
 ./debug\Scope.o

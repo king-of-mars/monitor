@@ -16,6 +16,9 @@
 #include <QSystemTrayIcon>
 #include <QMessageBox>
 #include <QtGui>
+#include <QDesktopServices>
+#include <QColor>
+
 
 #include "../WinPcapFns.h"
 #include "../ThreadListener.h"
@@ -62,6 +65,9 @@ class MainWindow : public QWidget
        //!What to do when the tray icon is clicked
        void iconActivated(QSystemTrayIcon::ActivationReason reason);
 
+       //!Open a browser at the project's webpage
+       void About();
+
     private:
         //!GUI fns
         string getUnits(float nBits);
@@ -80,6 +86,9 @@ class MainWindow : public QWidget
             float Download_offset;
             //!Data that was uploaded from a previous session
             float Upload_offset;
+            //!Keeps track of the last time the data was sampled
+            //!Used to reset the counter on a new day
+            string Data_Timestamp;
 
             vector<float> SpeedHist_Download;
             vector<float> SpeedHist_Upload;
@@ -89,6 +98,8 @@ class MainWindow : public QWidget
 
             //Display widgets:
             QGroupBox   *   DownloadUploadGB;
+
+            QPushButton *   AboutWebsite;
 
             QLabel      *   DownloadKBpS;
             QLabel      *   DownloadKBpS_label;

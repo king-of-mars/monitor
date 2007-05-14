@@ -2,21 +2,17 @@
 
 MainWindow::MainWindow()
 {
-    //GUI defaults, have to be loaded from a file
-    Default_DeviceNo = 2;
-
-    //-------------------------------------------
-
-    //Lookup the IP adress of the client:
-    //MISSING
-
-    //Misc inits:
+    //Members inits:
     LastAmountData_download = 0;
     LastAmountData_upload = 0;
     DataDownloadedSinceLastCall = 0;
     DataUploadedSinceLastCall = 0;
+    Data_Timestamp = get_time();
 
-    setWindowTitle(tr("Qt Network Monitor"));
+    //GUI defaults, have to be loaded from a file
+    Default_DeviceNo = 2;
+
+    setWindowTitle(tr("Qt Network Monitor v.: 0.2 beta 14 May 2007"));
     resize(520, 340);
 
     //-----------------Sets up the widgets---------------------------
@@ -73,8 +69,24 @@ MainWindow::MainWindow()
     //Speed Scope
     dataScope = new Scope(this);
 
+    //About
+    AboutWebsite = new QPushButton("Click here to visit the project's website");
+    AboutWebsite->setMaximumSize(QSize(600, 18));
+    AboutWebsite->setFlat(true);
+
+        //Color preference
+        QPalette AboutPalette;
+        QBrush AboutBrush(QColor(0, 59, 255, 255));
+        AboutBrush.setStyle(Qt::SolidPattern);
+        AboutPalette.setBrush(QPalette::Active, QPalette::ButtonText, AboutBrush);
+        AboutWebsite->setPalette(AboutPalette);
+
+    connect( AboutWebsite, SIGNAL( clicked() ), this, SLOT(About()) );
+
     {//Sets-up the layout
         QVBoxLayout *mainLayout = new QVBoxLayout;
+
+        mainLayout->addWidget(AboutWebsite);
 
         mainLayout->addWidget(DropListDeviceGB);
         mainLayout->addWidget(DownloadUploadGB);
@@ -131,21 +143,40 @@ MainWindow::MainWindow()
     connect( trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason) ),
              this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)) );
 
+
+
     //Set the data offset
     InfoReadWrite Reader;
     Reader.Read("Stats.dat");
 
-    if( Reader.getData().size() >= 2 )
+    //Checks the timestamp of the data
+    if ( is_today( Reader.get_timestamp() ) )
     {
-        Download_offset = Reader.getData()[0];
-        Upload_offset   = Reader.getData()[1];
+        if( Reader.getData().size() >= 2 )
+        {
+            Download_offset = Reader.getData()[0];
+            Upload_offset   = Reader.getData()[1];
+        }
+        else
+        {
+            Download_offset=0.0f;
+            Upload_offset=0.0f;
+            cout<<"There was a problem reading the stats file."<<endl;
+        }
     }
     else
     {
-        Download_offset=0.0f;
-        Upload_offset=0.0f;
-        cout<<"There was a problem reading the stats file."<<endl;
+        cout<<"Stats.dat's Timestamp is out of date, ignoring data."<<endl;
     }
+}
+
+void MainWindow::About()
+{
+    cout<<"Opening a browser at the project's website."<<endl;
+
+    QDesktopServices QDS;
+    QUrl ProjectWebsite(QString("http://reachme.web.googlepages.com/qtnetworkmonitor"));
+    QDS.openUrl( ProjectWebsite );
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -180,7 +211,7 @@ int MainWindow::OpenDevice(int DeviceNO)
     cout<<"Availables devices"<<endl;
 
     DropListDeviceChoice->clear();
-    for(int x=0; x< Devices->size();x++)
+    for(unsigned int x=0; x< Devices->size();x++)
     {
         QString temp( (*Devices)[x].c_str() );
         DropListDeviceChoice->addItem(temp);
@@ -199,7 +230,7 @@ int MainWindow::OpenDevice(int DeviceNO)
         return -1;
     }
 
-    if ( (Device_to_Open < 1) || (Device_to_Open > Devices->size()) )
+    if ( (Device_to_Open < 1) || (Device_to_Open > (int)Devices->size()) )
     {
         cout<<"Invalid device number or default device, trying device #1."<<endl;
         Device_to_Open = 1;
@@ -309,6 +340,15 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
 void MainWindow::updateKBPS()
 {
+    //Refrest timestamp, fush data if needed (new day)
+    if ( !is_today(Data_Timestamp) )
+        {//New day, flush data
+            cout<<"A new day is coming, the birds are chirping."<<endl;
+            clearMemory();
+        }
+
+    Data_Timestamp = get_time();
+
     DataDownloadedSinceLastCall =
     (PCHandler.get_TotalDataDownloaded_bytes() + Download_offset)-LastAmountData_download;
     LastAmountData_download = (PCHandler.get_TotalDataDownloaded_bytes() + Download_offset);
@@ -329,20 +369,22 @@ void MainWindow::updateKBPS()
 
     //Save the data to a file
     InfoReadWrite Writer;
+
     vector<float> data_out;
     data_out.push_back( PCHandler.get_TotalDataDownloaded_bytes() + Download_offset);
     data_out.push_back( PCHandler.get_TotalDataUploaded_bytes() + Upload_offset);
+
     Writer.setData(data_out);
     Writer.Write("Stats.dat");
 }
 
 void MainWindow::clearMemory()
 {
-    for (int x=0; x< SpeedHist_Download.size(); x++)
+    for (unsigned int x=0; x< SpeedHist_Download.size(); x++)
     {
         SpeedHist_Download[x] = 0.0;
     }
-    for (int x=0; x< SpeedHist_Upload.size(); x++)
+    for (unsigned int x=0; x< SpeedHist_Upload.size(); x++)
     {
         SpeedHist_Upload[x] = 0.0;
     }
