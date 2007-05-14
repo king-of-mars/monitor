@@ -393,6 +393,8 @@ void MainWindow::clearMemory()
     LastAmountData_upload=0.0;
     DataDownloadedSinceLastCall=0.0;
     DataUploadedSinceLastCall=0.0;
+    Download_offset=0.0;
+    Upload_offset=0.0;
 
     PCHandler.resetMemory();
 }
