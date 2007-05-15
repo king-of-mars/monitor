@@ -22,7 +22,7 @@ Version history:
     v 0.1: (10 May 2007)
         Initial beta release. Displays how much bandwidth a given device uses.
 
-    v 0.2: (15 May 2007)
+    v 0.2: (14 May 2007)
         Now saves data in file. Can have statistics on data on a daily basic. Data is kept between
         application closes.
 
