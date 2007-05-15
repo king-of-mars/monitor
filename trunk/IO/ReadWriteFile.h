@@ -52,6 +52,7 @@ class InfoReadWrite
     string find_subs_between(string mess_in, string left, string right);
 
     //Data that is read/written
+    float DeviceNo;
     float DownloadB;
     float UploadB;
     string Timestamp;

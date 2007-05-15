@@ -10,7 +10,10 @@ MainWindow::MainWindow()
     Data_Timestamp = get_time();
 
     //GUI defaults, have to be loaded from a file
-    Default_DeviceNo = 2;
+    Default_DeviceNo = 1;
+
+    //Load from file (erase the defaults if needed)
+    LoadDataFromFile();
 
     setWindowTitle(tr("Qt Network Monitor v.: 0.2 beta 14 May 2007"));
     resize(520, 340);
@@ -142,32 +145,6 @@ MainWindow::MainWindow()
     connect( PushBDropListSetToCurrent, SIGNAL( clicked() ), this, SLOT(ChangeDevice()) );
     connect( trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason) ),
              this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)) );
-
-
-
-    //Set the data offset
-    InfoReadWrite Reader;
-    Reader.Read("Stats.dat");
-
-    //Checks the timestamp of the data
-    if ( is_today( Reader.get_timestamp() ) )
-    {
-        if( Reader.getData().size() >= 2 )
-        {
-            Download_offset = Reader.getData()[0];
-            Upload_offset   = Reader.getData()[1];
-        }
-        else
-        {
-            Download_offset=0.0f;
-            Upload_offset=0.0f;
-            cout<<"There was a problem reading the stats file."<<endl;
-        }
-    }
-    else
-    {
-        cout<<"Stats.dat's Timestamp is out of date, ignoring data."<<endl;
-    }
 }
 
 void MainWindow::About()
@@ -252,7 +229,9 @@ int MainWindow::StartCapture()
 
 void MainWindow::ChangeDevice()
 {
+
     int device_No = DropListDeviceChoice->currentIndex();
+    Default_DeviceNo = device_No+1;
 
     ThreadL->instructStop();
     if(!ThreadL->wait(2500))
@@ -279,11 +258,11 @@ void MainWindow::ChangeDevice()
 
 string MainWindow::getUnits(float nBits)
 {
-    if ( nBits < 1024.0 )
+    if ( nBits < 1000.0 )
         return "B";
-    if ( nBits < 1024.0 * 1024.0 )
-        return "Kb";
-    if ( nBits < 1024.0 * 1024.0 * 1024.0 )
+    if ( nBits < 1000.0*1000.0 )
+        return "kB";
+    if ( nBits < 1000.0*1000.0*1000.0 )
         return "Mb";
     else
         return "Gb";
@@ -291,14 +270,14 @@ string MainWindow::getUnits(float nBits)
 
 float MainWindow::getDivisor(float nBits)
 {
-    if ( nBits < 1024.0 )
+    if ( nBits < 1000.0 )
         return 1.0f;
-    if ( nBits < 1024.0 * 1024.0 )
-        return 1024.0f;
-    if ( nBits < 1024.0 * 1024.0 * 1024.0 )
-        return 1024.0f*1024.0f;
+    if ( nBits < 1000.0*1000.0 )
+        return 1000.0f;
+    if ( nBits < 1000.0*1000.0*1000.0 )
+        return 1000.0f*1000.0f;
     else
-        return 1024.0f*1024.0f*1024.0f;
+        return 1000.0f*1000.0f*1000.0f;
 }
 
 void MainWindow::paintEvent(QPaintEvent *event)
@@ -367,15 +346,7 @@ void MainWindow::updateKBPS()
     dataScope->Set_Data(SpeedHist_Download, 0);
     dataScope->Set_Data(SpeedHist_Upload, 1);
 
-    //Save the data to a file
-    InfoReadWrite Writer;
-
-    vector<float> data_out;
-    data_out.push_back( PCHandler.get_TotalDataDownloaded_bytes() + Download_offset);
-    data_out.push_back( PCHandler.get_TotalDataUploaded_bytes() + Upload_offset);
-
-    Writer.setData(data_out);
-    Writer.Write("Stats.dat");
+    SaveDataToFile();
 }
 
 void MainWindow::clearMemory()
@@ -398,4 +369,52 @@ void MainWindow::clearMemory()
 
     PCHandler.resetMemory();
 }
+
+void MainWindow::LoadDataFromFile()
+{
+    //Set the data offset
+    InfoReadWrite Reader;
+    Reader.Read("Stats.dat");
+
+    //Checks the timestamp of the data
+    if ( is_today( Reader.get_timestamp() ) )
+    {
+        if( Reader.getData().size() >= 2 )
+        {
+            Default_DeviceNo = (unsigned int)Reader.getData()[0];//1212 Haha, not right!
+            Download_offset = Reader.getData()[1];
+            Upload_offset   = Reader.getData()[2];
+            LastAmountData_download = Download_offset;
+            LastAmountData_upload = Upload_offset;
+        }
+        else
+        {
+            Download_offset=0.0f;
+            Upload_offset=0.0f;
+            cout<<"There was a problem reading the stats file."<<endl;
+        }
+    }
+    else
+    {
+        cout<<"Stats.dat's Timestamp is out of date, ignoring data."<<endl;
+    }
+}
+
+void MainWindow::SaveDataToFile()
+{
+    //Save the data to a file
+    InfoReadWrite Writer;
+
+    vector<float> data_out;
+    data_out.push_back( (float) Default_DeviceNo );
+    data_out.push_back( PCHandler.get_TotalDataDownloaded_bytes() + Download_offset);
+    data_out.push_back( PCHandler.get_TotalDataUploaded_bytes() + Upload_offset);
+
+    Writer.setData(data_out);
+    Writer.Write("Stats.dat");
+}
+
+void LoadOptionsFromFile();
+
+void SaveOptionsToFile();
 

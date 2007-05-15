@@ -33,6 +33,7 @@ class MainWindow : public QWidget
     public:
 
         MainWindow();
+
         /*!
         Opens the Network device using the wrapper defined in
         WinPcapFns.h
@@ -74,6 +75,12 @@ class MainWindow : public QWidget
         float getDivisor(float nBits);
         void clearMemory();
 
+        //Load/Save
+        void LoadDataFromFile();
+        void LoadOptionsFromFile();
+        void SaveDataToFile();
+        void SaveOptionsToFile();
+
         //!Pcap wrapper
             PcapHandler PCHandler;
 
@@ -89,6 +96,9 @@ class MainWindow : public QWidget
             //!Keeps track of the last time the data was sampled
             //!Used to reset the counter on a new day
             string Data_Timestamp;
+
+            //!(Starts at 1)
+            unsigned int Default_DeviceNo;
 
             vector<float> SpeedHist_Download;
             vector<float> SpeedHist_Upload;
@@ -132,12 +142,6 @@ class MainWindow : public QWidget
             QAction *maximizeAction;
             QAction *restoreAction;
             QAction *quitAction;
-
-        //!GUI default values
-
-            //!(Starts at 1)
-            unsigned int Default_DeviceNo;
-
 };
 
 #endif
