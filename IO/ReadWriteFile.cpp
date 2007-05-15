@@ -67,6 +67,7 @@ InfoReadWrite::InfoReadWrite()
 {
     UploadB = 0.0f;
     DownloadB = 0.0f;
+    DeviceNo = 0.0f;
     Timestamp = "";
 }
 
@@ -75,6 +76,7 @@ void InfoReadWrite::Read(string filename)
 {
     string Sin = load_txt(filename);
 
+    DeviceNo = string_to_float( find_subs_between(Sin, "DeviceNo=", "\n") );
     DownloadB = string_to_float( find_subs_between(Sin, "DownloadToday=", "\n") );
     UploadB = string_to_float( find_subs_between(Sin, "UploadToday=", "\n") );
     Timestamp = find_subs_between(Sin, "Timestamp=", "\n");
@@ -84,6 +86,7 @@ void InfoReadWrite::Read(string filename)
 void InfoReadWrite::Write(string filename)
 {
     string out="";
+    out = out + "DeviceNo=" + float_to_string(DeviceNo) + "\n";
     out = out + "DownloadToday=" + float_to_string(DownloadB) + "\n";
     out = out + "UploadToday=" + float_to_string(UploadB) + "\n";
     out = out + "Timestamp=" + get_time() + "\n";
@@ -94,6 +97,7 @@ void InfoReadWrite::Write(string filename)
 vector<float> InfoReadWrite::getData()
 {
     vector<float> out;
+    out.push_back(DeviceNo);
     out.push_back(DownloadB);
     out.push_back(UploadB);
     return out;
@@ -101,10 +105,11 @@ vector<float> InfoReadWrite::getData()
 
 void InfoReadWrite::setData(vector<float> in)
 {
-    if(in.size() == 2)
+    if(in.size() == 3)
     {
-        DownloadB = in[0];
-        UploadB = in[1];
+        DeviceNo = in[0];
+        DownloadB = in[1];
+        UploadB = in[2];
     }
     else
     cout<<"Invalid data, won't write the file."<<endl;
