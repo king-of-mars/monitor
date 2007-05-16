@@ -15,7 +15,19 @@ MainWindow::MainWindow()
     //Load from file (erase the defaults if needed)
     LoadDataFromFile();
 
-    setWindowTitle(tr("Qt Network Monitor v.: 0.2 beta 14 May 2007"));
+    //Start the device
+    cout<<"Attempting to open device"<<endl;
+
+    OpenDevice();
+
+    cout<<"Attempting to start capture device"<<endl;
+
+    StartCapture();
+}
+
+void  MainWindow::setupGUI()
+{
+   setWindowTitle(tr("Qt Network Monitor v.: 0.3 beta"));
     resize(520, 340);
 
     //-----------------Sets up the widgets---------------------------
@@ -113,14 +125,6 @@ MainWindow::MainWindow()
     timer_data->start(1000);
 
     ThreadL = new ThreadListener(&PCHandler);
-
-    cout<<"Attempting to open device"<<endl;
-
-    OpenDevice();
-
-    cout<<"Attempting to start capture device"<<endl;
-
-    StartCapture();
 
     SpeedHist_Download = vector<float>(256,0);
     SpeedHist_Upload = vector<float>(256,0);
@@ -280,7 +284,7 @@ float MainWindow::getDivisor(float nBits)
         return 1000.0f*1000.0f*1000.0f;
 }
 
-void MainWindow::paintEvent(QPaintEvent *event)
+void MainWindow::updateGUI()
 {
     //Total data downloaded:
     QString DownloadKBTot_S;
@@ -336,6 +340,12 @@ void MainWindow::updateKBPS()
     (PCHandler.get_TotalDataUploaded_bytes() + Upload_offset)-LastAmountData_upload;
     LastAmountData_upload = (PCHandler.get_TotalDataUploaded_bytes() + Upload_offset);
 
+    if ( DataDownloadedSinceLastCall < 0.0 )
+        DataDownloadedSinceLastCall = 0.0;
+
+    if ( DataUploadedSinceLastCall < 0.0 )
+        DataUploadedSinceLastCall = 0.0;
+
     //Push one in, remove one
     SpeedHist_Download.push_back( DataDownloadedSinceLastCall );
     SpeedHist_Download.erase( SpeedHist_Download.begin(), SpeedHist_Download.begin()+1);
@@ -347,6 +357,7 @@ void MainWindow::updateKBPS()
     dataScope->Set_Data(SpeedHist_Upload, 1);
 
     SaveDataToFile();
+    updateGUI();
 }
 
 void MainWindow::clearMemory()
@@ -414,7 +425,7 @@ void MainWindow::SaveDataToFile()
     Writer.Write("Stats.dat");
 }
 
-void LoadOptionsFromFile();
+void LoadOptionsFromFile(){cout<<"Not implemented yet."<<endl;}
 
-void SaveOptionsToFile();
+void SaveOptionsToFile(){cout<<"Not implemented yet."<<endl;}
 

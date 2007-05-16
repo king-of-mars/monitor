@@ -48,8 +48,9 @@ class MainWindow : public QWidget
         int StartCapture();
 
     protected:
-       void paintEvent(QPaintEvent *event);
+       //void paintEvent(QPaintEvent *event);
        void closeEvent(QCloseEvent *event);
+       void updateGUI();
 
     private slots:
         /*!
@@ -70,7 +71,11 @@ class MainWindow : public QWidget
        void About();
 
     private:
-        //!GUI fns
+
+
+
+        //GUI fns
+        void setupGUI();
         string getUnits(float nBits);
         float getDivisor(float nBits);
         void clearMemory();

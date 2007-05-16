@@ -10,6 +10,9 @@
 
 using namespace std;
 
+/*!
+This class is used to encapsulate a PcapHandler in a thread.
+*/
 class ThreadListener : public QThread
 {
     Q_OBJECT
