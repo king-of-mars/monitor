@@ -7,11 +7,11 @@
 	<File name="GUI\Console.h" open="0" top="0" tabpos="0">
 		<Cursor position="262" topLine="0" />
 	</File>
-	<File name="GUI\MainWindow.cpp" open="1" top="0" tabpos="3">
-		<Cursor position="7112" topLine="214" />
+	<File name="GUI\MainWindow.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="8028" topLine="249" />
 	</File>
-	<File name="GUI\MainWindow.h" open="1" top="0" tabpos="2">
-		<Cursor position="2657" topLine="78" />
+	<File name="GUI\MainWindow.h" open="0" top="0" tabpos="2">
+		<Cursor position="1085" topLine="24" />
 	</File>
 	<File name="GUI\Scope.cpp" open="0" top="0" tabpos="6">
 		<Cursor position="2816" topLine="95" />
@@ -19,10 +19,10 @@
 	<File name="GUI\Scope.h" open="0" top="0" tabpos="0">
 		<Cursor position="371" topLine="13" />
 	</File>
-	<File name="IO\ReadWriteFile.cpp" open="1" top="0" tabpos="5">
-		<Cursor position="1904" topLine="91" />
+	<File name="IO\ReadWriteFile.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="2142" topLine="78" />
 	</File>
-	<File name="IO\ReadWriteFile.h" open="1" top="0" tabpos="4">
+	<File name="IO\ReadWriteFile.h" open="0" top="0" tabpos="4">
 		<Cursor position="1187" topLine="33" />
 	</File>
 	<File name="Misc.cpp" open="0" top="0" tabpos="4">
@@ -32,10 +32,10 @@
 		<Cursor position="547" topLine="7" />
 	</File>
 	<File name="Notes.txt" open="0" top="0" tabpos="3">
-		<Cursor position="448" topLine="0" />
+		<Cursor position="206" topLine="0" />
 	</File>
-	<File name="QtNetworkMon.pro" open="1" top="1" tabpos="6">
-		<Cursor position="515" topLine="0" />
+	<File name="QtNetworkMon.pro" open="0" top="0" tabpos="6">
+		<Cursor position="297" topLine="3" />
 	</File>
 	<File name="Readme.txt" open="0" top="0" tabpos="0">
 		<Cursor position="820" topLine="0" />
@@ -46,13 +46,13 @@
 	<File name="ThreadListener.h" open="0" top="0" tabpos="5">
 		<Cursor position="169" topLine="4" />
 	</File>
-	<File name="WinPcapFns.cpp" open="0" top="0" tabpos="5">
+	<File name="WinPcapFns.cpp" open="1" top="0" tabpos="2">
 		<Cursor position="4046" topLine="150" />
 	</File>
-	<File name="WinPcapFns.h" open="0" top="0" tabpos="4">
-		<Cursor position="300" topLine="0" />
+	<File name="WinPcapFns.h" open="1" top="1" tabpos="1">
+		<Cursor position="4045" topLine="95" />
 	</File>
-	<File name="main.cpp" open="1" top="0" tabpos="1">
+	<File name="main.cpp" open="0" top="0" tabpos="1">
 		<Cursor position="396" topLine="0" />
 	</File>
 	<File name="setIcon.rc" open="0" top="0" tabpos="0">

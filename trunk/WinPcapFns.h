@@ -54,7 +54,7 @@ class PcapHandler
         int openDevice(int inum);
 
         /*!
-        Starts capture on the currently open device,
+        Starts capture on the currently open device,\n
         justs outputs to std the length of the packets
         */
         int StartListenOnDevice_countData();
@@ -79,7 +79,11 @@ class PcapHandler
         */
         string getDeviceIP(int DeviceNo);
 
+        //!Returns the total amount of data downloaded on the
+        //!current device.
         float get_TotalDataDownloaded_bytes();
+        //!Returns the total amount of data uploaded on the
+        //!current device.
         float get_TotalDataUploaded_bytes();
 
         //!Erase the data gathered from the device
@@ -88,9 +92,9 @@ class PcapHandler
 
     private:
 
-        //!Thread-safe function to set TotalDataTransferred_bytes
-        //!(Implemented with QMutex)
+        //!Sets TotalDataTransferred_bytes
         void set_TotalDataDownloaded_bytes(float TDTb_in);
+        //!Sets TotalDataUploaded_bytes
         void set_TotalDataUploaded_bytes(float TDTb_in);
 
         //!The messages reported by the application
@@ -100,6 +104,7 @@ class PcapHandler
         pcap_if_t *alldevs;
         //!The number of available devices
         int Ndevices;
+
         /*!
         If the device is ready to be used.
         0  = Not initialised
@@ -113,11 +118,13 @@ class PcapHandler
 
         //!Total data transmitted in bytes
         float TotalDataDownloaded_bytes;
+        //!Total data transmitted in bytes
         float TotalDataUploaded_bytes;
 
         //!The ip address of the current device
         string IPadd;
 
+        //!True if it has been instructed to return (useful for threads, avoid infinite loops).
         bool stopInstructed;
 };
 
@@ -143,9 +150,5 @@ typedef struct ip_header{
     ip_address  daddr;      // Destination address
     u_int   op_pad;         // Option + Padding
 }ip_header;
-
-//Little functions that have nothing to do with network
-string int_to_string(int Iin);
-string ip_to_String(int a,int b, int c, int d);
 
 #endif
