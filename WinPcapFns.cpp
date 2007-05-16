@@ -93,6 +93,8 @@ int PcapHandler::openDevice(int inum)
         return -1;
     }
 
+    getDeviceIP(inum);
+
     /* Jump to the selected adapter */
     int i=0;
     for(d=alldevs, i=0; i< inum-1 ;d=d->next, i++);

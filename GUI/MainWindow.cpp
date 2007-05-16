@@ -15,6 +15,8 @@ MainWindow::MainWindow()
     //Load from file (erase the defaults if needed)
     LoadDataFromFile();
 
+    setupGUI();
+
     //Start the device
     cout<<"Attempting to open device"<<endl;
 
@@ -217,7 +219,6 @@ int MainWindow::OpenDevice(int DeviceNO)
         Device_to_Open = 1;
     }
 
-    PCHandler.getDeviceIP(Device_to_Open);
     PCHandler.openDevice(Device_to_Open);
 
     DropListDeviceChoice->setCurrentIndex(Device_to_Open-1);
@@ -240,9 +241,7 @@ void MainWindow::ChangeDevice()
     ThreadL->instructStop();
     if(!ThreadL->wait(2500))
     {
-        //Console.Display_Messages("ERROR: Thread didn't stop properly, process had to be killed.");
-        //messages.push_back
-        //messages.push_back("Please restart the application");
+        Console->Display_Message("ERROR: Thread didn't stop properly, process had to be killed.");
         cout<<"Error stopping thread"<<endl;
 
         ThreadL->terminate();//Very dangerous

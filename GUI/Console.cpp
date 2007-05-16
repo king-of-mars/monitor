@@ -10,6 +10,11 @@ void QConsole::Display_Messages(vector<string> VM_in)
 {
     for (unsigned int x=0; x<VM_in.size(); x++)
     {
-        append(QString(VM_in[x].c_str()));
+        Display_Message(VM_in[x]);
     }
+}
+
+void QConsole::Display_Message(string Sin)
+{
+    append( QString( Sin.c_str() ) );
 }
