@@ -7,7 +7,7 @@ TARGET = QtNetworkMon
 
 INCLUDEPATH += .
 
-#CONFIG += console
+CONFIG += console
 
 RESOURCES = Ressources.qrc
 

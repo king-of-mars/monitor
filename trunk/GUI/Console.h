@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <QTextEdit>
+#include <QString>
 
 using namespace std;
 
@@ -16,6 +17,7 @@ Q_OBJECT
         QConsole(QWidget *parent = 0);
 
         void Display_Messages(vector<string>);
+        void Display_Message(string);
 
 
 };

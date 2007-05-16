@@ -1,12 +1,10 @@
 To do:
-    -Web site with user comments
     -Load GUI options from config file
     -Harmonize comments with Doxygen
     -Check if it is worth using the UI builder
     -Scope colors
     -Memory leaks
     -Scope: Have the different data match strings
-    -Console needs to be able to get message from GUI too
     -Show/Hide parts of the widget (console and device select)
 
     -Keep a different history for different devices
