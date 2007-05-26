@@ -49,7 +49,6 @@ class MainWindow : public QWidget
 
     protected:
        //void paintEvent(QPaintEvent *event);
-       void closeEvent(QCloseEvent *event);
        void updateGUI();
 
     private slots:
@@ -64,15 +63,10 @@ class MainWindow : public QWidget
         */
         void ChangeDevice();
 
-       //!What to do when the tray icon is clicked
-       void iconActivated(QSystemTrayIcon::ActivationReason reason);
-
        //!Open a browser at the project's webpage
        void About();
 
     private:
-
-
 
         //GUI fns
         void setupGUI();
@@ -138,15 +132,6 @@ class MainWindow : public QWidget
 
             QConsole    *   Console;
             Scope       *   dataScope;
-
-            //Tray
-            QComboBox * iconComboBox;
-            QSystemTrayIcon *trayIcon;
-            QMenu *trayIconMenu;
-            QAction *minimizeAction;
-            QAction *maximizeAction;
-            QAction *restoreAction;
-            QAction *quitAction;
 };
 
 #endif
