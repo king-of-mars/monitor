@@ -144,6 +144,14 @@ void MainWindow::About()
     QDS.openUrl( ProjectWebsite );
 }
 
+void MainWindow::toggleConsoleView()
+{
+    if ( Console->isVisible() )
+        Console->hide();
+    else
+        Console->show();
+}
+
 int MainWindow::OpenDevice(int DeviceNO)
 {
     vector<string> * Devices = new vector<string>;

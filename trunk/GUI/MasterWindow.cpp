@@ -5,11 +5,11 @@ MasterWindow::MasterWindow()
     setWindowTitle(tr("Qt Network Monitor v.: 0.3 beta"));
     resize(520, 340);
 
-    buildMenu();
-    buildTray();
-
     widgetMainWindow = new MainWindow();
     setCentralWidget(widgetMainWindow);
+
+    buildMenu();
+    buildTray();
 }
 
 void MasterWindow::buildTray()
@@ -37,12 +37,12 @@ void MasterWindow::buildTray()
 void MasterWindow::buildMenu()
 {
     //Menu
-    testAct = new QAction(tr("&Down/Up stats"), this);
-    testAct->setStatusTip(tr("Show Hide Down/Up stats"));
-    //connect(testAct, SIGNAL(triggered()), this, SLOT(redo()));
+    ShowHideConsoleAct = new QAction(tr("&Console"), this);
+    ShowHideConsoleAct->setStatusTip(tr("Show/Hide Console"));
+    connect(ShowHideConsoleAct, SIGNAL(triggered()), widgetMainWindow, SLOT(toggleConsoleView()));
 
     showMenu = menuBar()->addMenu(tr("&Show/Hide"));
-    showMenu->addAction(testAct);
+    showMenu->addAction(ShowHideConsoleAct);
 }
 
 

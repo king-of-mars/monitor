@@ -9,9 +9,11 @@ To do:
 
     -Keep a different history for different devices
     -Keep an history of the data downloaded (last day/week/month/year) -> XML, HTML?
+    -Show/hide: store in a file the status of the GUI
 
 Bugs:
     - ...
 
 New in version 0.3:
     - Bugfixes
+    - Mainwindow menu --> Show/Hide

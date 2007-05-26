@@ -66,6 +66,9 @@ class MainWindow : public QWidget
        //!Open a browser at the project's webpage
        void About();
 
+       //!Shows/Hide the console
+       void toggleConsoleView();
+
     private:
 
         //GUI fns
