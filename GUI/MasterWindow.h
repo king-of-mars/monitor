@@ -31,12 +31,13 @@ class MasterWindow : public QMainWindow
 
         //Menu
         QMenu       *   showMenu;
-        QAction     *   testAct;
+        QAction     *   ShowHideConsoleAct;
 
         //Tray
         QComboBox * iconComboBox;
         QSystemTrayIcon *trayIcon;
         QMenu *trayIconMenu;
+
         QAction *minimizeAction;
         QAction *maximizeAction;
         QAction *restoreAction;
