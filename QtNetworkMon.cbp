@@ -10,7 +10,7 @@
 			<Target title="Release">
 				<Option output=".\release\QtNetworkMon.exe" prefix_auto="1" extension_auto="1" />
 				<Option object_output=".\" />
-				<Option type="0" />
+				<Option type="1" />
 				<Option compiler="gcc" />
 				<MakeCommands>
 					<Build command="$make -f $makefile $target" />
@@ -29,6 +29,8 @@
 		<Unit filename="GUI\Console.h" />
 		<Unit filename="GUI\MainWindow.cpp" />
 		<Unit filename="GUI\MainWindow.h" />
+		<Unit filename="GUI\MasterWindow.cpp" />
+		<Unit filename="GUI\MasterWindow.h" />
 		<Unit filename="GUI\Scope.cpp" />
 		<Unit filename="GUI\Scope.h" />
 		<Unit filename="IO\ReadWriteFile.cpp" />

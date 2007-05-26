@@ -28,6 +28,7 @@ HEADERS += WinPcapFns.h \
             Misc.h \
             ThreadListener.h \
             GUI\MainWindow.h \
+            GUI\MasterWindow.h \
             GUI\Scope.h \
             GUI\Console.h \
             IO\ReadWriteFile.h \
@@ -37,6 +38,7 @@ SOURCES += main.cpp \
             Misc.cpp \
             WinPcapFns.cpp \
             GUI\MainWindow.cpp \
+            GUI\MasterWindow.cpp \
             GUI\Scope.cpp \
             GUI\Console.cpp \
             IO\ReadWriteFile.cpp \

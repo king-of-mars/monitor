@@ -9,7 +9,7 @@ MainWindow::MainWindow()
     DataUploadedSinceLastCall = 0;
     Data_Timestamp = get_time();
 
-    //GUI defaults, have to be loaded from a file
+    //GUI defaults
     Default_DeviceNo = 1;
 
     //Load from file (erase the defaults if needed)
@@ -29,8 +29,7 @@ MainWindow::MainWindow()
 
 void  MainWindow::setupGUI()
 {
-   setWindowTitle(tr("Qt Network Monitor v.: 0.3 beta"));
-    resize(520, 340);
+
 
     //-----------------Sets up the widgets---------------------------
     {//Up/Down Stats
@@ -91,19 +90,20 @@ void  MainWindow::setupGUI()
     AboutWebsite->setMaximumSize(QSize(600, 18));
     AboutWebsite->setFlat(true);
 
-        //Color preference
-        QPalette AboutPalette;
-        QBrush AboutBrush(QColor(0, 59, 255, 255));
-        AboutBrush.setStyle(Qt::SolidPattern);
-        AboutPalette.setBrush(QPalette::Active, QPalette::ButtonText, AboutBrush);
-        AboutWebsite->setPalette(AboutPalette);
+        //Color Palette
+        QPalette QBluePalette;
+        QBrush BlueBrush(QColor(0, 59, 255, 255));
+        BlueBrush.setStyle(Qt::SolidPattern);
+        QBluePalette.setBrush(QPalette::Active, QPalette::ButtonText, BlueBrush);
+
+    AboutWebsite->setPalette(QBluePalette);
 
     connect( AboutWebsite, SIGNAL( clicked() ), this, SLOT(About()) );
 
     {//Sets-up the layout
         QVBoxLayout *mainLayout = new QVBoxLayout;
 
-        mainLayout->addWidget(AboutWebsite);
+        mainLayout->addWidget(AboutWebsite, Qt::AlignBottom);
 
         mainLayout->addWidget(DropListDeviceGB);
         mainLayout->addWidget(DownloadUploadGB);
@@ -131,26 +131,8 @@ void  MainWindow::setupGUI()
     SpeedHist_Download = vector<float>(256,0);
     SpeedHist_Upload = vector<float>(256,0);
 
-    //Tray
-    setWindowIcon(QIcon(":/GFX/systray/trash.svg"));
-
-    quitAction = new QAction(tr("&Quit"), this);
-    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
-
-    trayIcon = new QSystemTrayIcon(this);
-    trayIcon->setIcon((QIcon(":/GFX/systray/TrayIconNormal.png")));
-
-    trayIconMenu = new QMenu(this);
-    trayIconMenu->setIcon((QIcon(":/GFX/systray/TrayIconNormal.png")));
-    trayIconMenu->addAction(quitAction);
-
-    trayIcon->setContextMenu(trayIconMenu);
-    //trayIcon->setVisible(true);
-
     //Signals/Slots
     connect( PushBDropListSetToCurrent, SIGNAL( clicked() ), this, SLOT(ChangeDevice()) );
-    connect( trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason) ),
-             this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)) );
 }
 
 void MainWindow::About()
@@ -160,30 +142,6 @@ void MainWindow::About()
     QDesktopServices QDS;
     QUrl ProjectWebsite(QString("http://reachme.web.googlepages.com/qtnetworkmonitor"));
     QDS.openUrl( ProjectWebsite );
-}
-
-void MainWindow::closeEvent(QCloseEvent *event)
-{
-    trayIcon->setVisible(true);
-
-    if (trayIcon->isVisible())
-    {
-    hide();
-    event->ignore();
-    }
-}
-
-void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
-{
-    switch (reason)
-    {
-    case QSystemTrayIcon::Trigger:
-    case QSystemTrayIcon::DoubleClick:
-    //trayIcon->setVisible(false);
-    show();
-
-    default:;
-    }
 }
 
 int MainWindow::OpenDevice(int DeviceNO)
@@ -386,16 +344,23 @@ void MainWindow::LoadDataFromFile()
     InfoReadWrite Reader;
     Reader.Read("Stats.dat");
 
-    //Checks the timestamp of the data
-    if ( is_today( Reader.get_timestamp() ) )
-    {
-        if( Reader.getData().size() >= 2 )
+    if( Reader.getData().size() >= 2 )
         {
+
             Default_DeviceNo = (unsigned int)Reader.getData()[0];//1212 Haha, not right!
-            Download_offset = Reader.getData()[1];
-            Upload_offset   = Reader.getData()[2];
-            LastAmountData_download = Download_offset;
-            LastAmountData_upload = Upload_offset;
+
+            //Checks the timestamp of the data
+            if ( is_today( Reader.get_timestamp() ) )
+            {
+                Download_offset = Reader.getData()[1];
+                Upload_offset   = Reader.getData()[2];
+                LastAmountData_download = Download_offset;
+                LastAmountData_upload = Upload_offset;
+            }
+            else
+            {
+                cout<<"Stats.dat's Timestamp is out of date, ignoring data."<<endl;
+            }
         }
         else
         {
@@ -403,11 +368,6 @@ void MainWindow::LoadDataFromFile()
             Upload_offset=0.0f;
             cout<<"There was a problem reading the stats file."<<endl;
         }
-    }
-    else
-    {
-        cout<<"Stats.dat's Timestamp is out of date, ignoring data."<<endl;
-    }
 }
 
 void MainWindow::SaveDataToFile()

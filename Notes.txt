@@ -11,3 +11,7 @@ To do:
     -Keep an history of the data downloaded (last day/week/month/year) -> XML, HTML?
 
 Bugs:
+    - ...
+
+New in version 0.3:
+    - Bugfixes
