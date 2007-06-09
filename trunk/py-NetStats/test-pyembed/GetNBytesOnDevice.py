@@ -9,4 +9,5 @@ import os
 if (__name__ == '__main__'):
 
 	print "Not implemented yet :("
+	NBytesOnDevice = 1212
 	
